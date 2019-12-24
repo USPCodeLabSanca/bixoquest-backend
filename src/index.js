@@ -1,9 +1,16 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const process = require('process')
+const cors = require('cors')
+
+const Routes = require('./routes')
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
+
+app.use(express.json())
+app.use(cors())
+app.use(Routes)
 
 mongoose.connect(
   'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/test?retryWrites=true&w=majority',
