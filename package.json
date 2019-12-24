@@ -18,5 +18,8 @@
   "homepage": "https://github.com/USPCodeLabSanca/bixoquest-backend#readme",
   "devDependencies": {
     "standard": "^14.3.1"
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
   }
 }
