@@ -1,0 +1,22 @@
+{
+  "name": "bixoquest-backend",
+  "version": "1.0.0",
+  "description": "bixoquest-backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/USPCodeLabSanca/bixoquest-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/USPCodeLabSanca/bixoquest-backend/issues"
+  },
+  "homepage": "https://github.com/USPCodeLabSanca/bixoquest-backend#readme",
+  "devDependencies": {
+    "standard": "^14.3.1"
+  }
+}
