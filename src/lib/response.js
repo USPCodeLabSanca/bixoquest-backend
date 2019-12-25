@@ -20,6 +20,6 @@ module.exports = class Response {
   send (res) {
     const dataToSend = { ...this }
     delete dataToSend.status // prevent sending the status code
-    res.status(this.status).send(dataToSend)
+    if (!res.headersSent) res.status(this.status).send(dataToSend)
   }
 }
