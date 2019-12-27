@@ -13,7 +13,7 @@ app.use(cors())
 app.use(Routes)
 
 mongoose.connect(
-  'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/test?retryWrites=true&w=majority',
+  'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority',
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
 

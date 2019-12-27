@@ -2,10 +2,11 @@ const Mongoose = require('mongoose')
 const ObjectID = Mongoose.Schema.Types.ObjectId
 
 const userSchema = Mongoose.Schema({
-  email: String,
+  nusp: String,
   password: String,
-  createdAt: Date,
-  id: ObjectID
-})
+  name: String,
+  course: String,
+  _id: ObjectID
+}, { collection: 'users-usp' })
 
-module.exports = Mongoose.model('user', userSchema)
+module.exports = Mongoose.model('users-usp', userSchema)
