@@ -17,6 +17,11 @@ module.exports.isString = curry((errorMessage, thing) => {
   return thing
 })
 
+module.exports.onlyContainsNumbers = curry((errorMessage, thing) => {
+  if (thing.match(/\D/)) error(errorMessage)
+  return thing
+})
+
 module.exports.mustBeTrimmed = curry((errorMessage, thing) => {
   if (thing.trim() !== thing) error(errorMessage)
   return thing

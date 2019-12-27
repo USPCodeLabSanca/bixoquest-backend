@@ -7,7 +7,8 @@ const {
   minLength,
   mustBeTrimmed,
   mapAndDeleteKey,
-  objectShouldBeEmpty
+  objectShouldBeEmpty,
+  onlyContainsNumbers
 } = require('./common')
 
 const validateEmail = compose(
@@ -21,11 +22,18 @@ const validateEmail = compose(
 )
 
 const validatePassword = compose(
-  minLength(6, 'Password must have at least 6 characters'),
+  minLength(8, 'Password must have at least 8 characters'),
   mustBeTrimmed('Password cannot start or end with and empty space'),
   isString('Password must be a string'),
   isNotEmpty('Password cannot be empty'),
   isRequired('Password is required')
+)
+
+const validateNusp = compose(
+  onlyContainsNumbers('Nusp must only contain numbers'),
+  isString('Nusp must be a string'),
+  isNotEmpty('Nusp cannot be empty'),
+  isRequired('Nusp is required')
 )
 
 module.exports.signup = compose(
@@ -38,4 +46,10 @@ module.exports.login = compose(
   objectShouldBeEmpty(),
   mapAndDeleteKey('password', validatePassword),
   mapAndDeleteKey('email', validateEmail)
+)
+
+module.exports.mockAuthUsp = compose(
+  objectShouldBeEmpty(),
+  mapAndDeleteKey('password', validatePassword),
+  mapAndDeleteKey('nusp', validateNusp)
 )
