@@ -34,7 +34,6 @@ router.post('/', validateRequest(authValidators.mockAuthUsp, async (req, res) =>
   }
   const user = response.data.data
   const dbUser = await UserModel.findOne({ nusp: user.nusp })
-  console.log(dbUser)
   if (!dbUser) {
     await UserModel.create(user)
   }
