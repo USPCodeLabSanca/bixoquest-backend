@@ -6,6 +6,7 @@ const Response = require('../lib/response')
 const { validateRequest, authValidators } = require('../lib/validators')
 const UserModel = require('../models/user')
 const UserUspModel = require('../models/user-usp')
+const jwt = require('../lib/jwt')
 
 const router = Router()
 
@@ -30,13 +31,16 @@ router.post('/', validateRequest(authValidators.mockAuthUsp, async (req, res) =>
   } catch (e) {
     const { response } = e
     if (!response) Response.failure(undefined, 500).send(res)
-    else return Response.failure(response.data.message).send(res)
+    else return Response.failure(response.data.message, response.status).send(res)
   }
   const user = response.data.data
   const dbUser = await UserModel.findOne({ nusp: user.nusp })
   if (!dbUser) {
     await UserModel.create(user)
   }
+  delete user.password
+  const token = jwt.create({ nusp: user.nusp })
+  res.setHeader('Authorization', token)
   Response.success(user).send(res)
 }))
 
