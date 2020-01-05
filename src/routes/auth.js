@@ -10,7 +10,6 @@ const jwt = require('../lib/jwt')
 
 const router = Router()
 
-// Login user
 router.post('/mock-auth-usp', validateRequest(authValidators.mockAuthUsp, async (req, res) => {
   const { nusp, password } = req.body
   const user = await UserUspModel.findOne({ nusp })
