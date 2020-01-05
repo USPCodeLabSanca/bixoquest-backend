@@ -7,6 +7,6 @@ const userSchema = Mongoose.Schema({
   name: String,
   course: String,
   _id: ObjectID
-}, { collection: 'users' })
+}, { collection: 'users-usp' })
 
-module.exports = Mongoose.model('users', userSchema)
+module.exports = Mongoose.model('users-usp', userSchema)
