@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/USPCodeLabSanca/bixoquest-backend#readme",
   "devDependencies": {
+    "nodemon": "^2.0.2",
     "standard": "^14.3.1"
   },
   "dependencies": {
