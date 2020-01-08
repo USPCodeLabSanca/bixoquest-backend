@@ -1,25 +1,26 @@
 const { Router } = require('express')
 const missionModel = require('../models/mission') 
+const Response = require('../lib/response')
 
 const router = Router();
 
 
 router.get('/', async (req, res) => {
 
-    let missions = await missionModel.find()
+    const missions = await missionModel.find()
 
-    res.json(missions)
+    Response.success(missions).send(res)
 })
 
 router.get('/:id', async (req,res) => {
 
-    let mission = await missionModel.findById({ _id: req.query.id })
+    const mission = await missionModel.findById({ _id: req.params.id })
 
     if(!mission){
-        res.status(500).send('Não encontrou missão com esse id')
+        Response.failure(500).send('Não encontrou missão com esse id', 404).send(res)
     }
 
-    res.json(mission)
+    Response.success(mission).send(res)
 
 })
 
@@ -39,16 +40,12 @@ router.post('/', async (req,res) => {
     newMission.key = req.body.key
     newMission.type = req.body.type 
 
-    const missionCreated = newMission.save()
+    await newMission.save()
 
     res.json(newMission)
 
 })
 
-
-router.put('/')
-
-router.delete('/')
 
 
 module.exports = router
