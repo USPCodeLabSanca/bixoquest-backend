@@ -26,17 +26,20 @@ router.get('/:id', async (req,res) => {
 
 router.post('/', async (req,res) => {
 
-    let newMission = await missionModel({
-        title: req.body.title,
-        description: req.body.description,
-        number_stickers: req.body.number_stickers,
-        lat: req.body.lat,
-        lng: req.body.lng,
-        available_at: req.body.available_at,
-        expirate_at: req.body.expirate_at,
-        key: req.body.key,
-        type: req.body.type
-    })
+
+    let newMission = new missionModel()
+
+    newMission.title = req.body.title
+    newMission.description = req.body.description
+    newMission.number_stickers = req.body.number_stickers
+    newMission.lat = req.body.lat,
+    newMission.lng = req.body.lng;
+    newMission.available_at = req.body.available_at
+    newMission.expirate_at = req.body.expirate_at
+    newMission.key = req.body.key
+    newMission.type = req.body.type 
+
+    const missionCreated = newMission.save()
 
     res.json(newMission)
 

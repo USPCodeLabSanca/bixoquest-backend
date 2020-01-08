@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
-const ObjectID = mongoose.Schema.Types.ObjectId
+
 
 const missionSchema = mongoose.Schema({
-    _id: ObjectID,
     title: String,
     description: String,
     number_stickers: Number,
