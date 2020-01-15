@@ -9,10 +9,12 @@ const app = express()
 const port = process.env.PORT || 8080
 
 app.use(express.json())
-app.use(cors({
-  exposedHeaders: ['authorization'],
-  origin: '*'
-}))
+app.use(
+  cors({
+    exposedHeaders: ['authorization'],
+    origin: '*'
+  })
+)
 app.use(Routes)
 
 app.get('/', (req, res) => {
@@ -26,14 +28,15 @@ app.get('/', (req, res) => {
 // const backendUrl = "mongodb://mongo:27017/BixoQuest";
 
 // MongoAtlas Url
-const backendUrl = 'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority'
+const backendUrl =
+  'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority'
 
-mongoose.connect(
-  backendUrl,
-  { useNewUrlParser: true, useUnifiedTopology: true }
-)
+mongoose.connect(backendUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
-mongoose.connection.on('error', (e) => {
+mongoose.connection.on('error', e => {
   console.error('Error connecting to MongoDB!')
   console.error(e)
 })

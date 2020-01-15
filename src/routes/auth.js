@@ -11,41 +11,52 @@ const jwt = require('../lib/jwt')
 const router = Router()
 
 // Login user
-router.post('/mock-auth-usp', validateRequest(authValidators.mockAuthUsp, async (req, res) => {
-  const { nusp, password } = req.body
-  const user = await UserUspModel.findOne({ nusp })
-  if (!user) {
-    return Response.failure('Invalid credentials', 401).send(res)
-  }
-  if (user.password !== password) {
-    return Response.failure('Invalid credentials', 401).send(res)
-  }
-  Response.success(user).send(res)
-}))
+router.post(
+  '/mock-auth-usp',
+  validateRequest(authValidators.mockAuthUsp, async (req, res) => {
+    const { nusp, password } = req.body
+    const user = await UserUspModel.findOne({ nusp })
+    if (!user) {
+      return Response.failure('Invalid credentials', 401).send(res)
+    }
+    if (user.password !== password) {
+      return Response.failure('Invalid credentials', 401).send(res)
+    }
+    Response.success(user).send(res)
+  })
+)
 
 // Login user
-router.post('/', validateRequest(authValidators.mockAuthUsp, async (req, res) => {
-  let response
-  try {
-    response = await Axios.post('http://localhost:8080/auth/mock-auth-usp', req.body)
-  } catch (e) {
-    const { response } = e
-    if (!response) {
-      return Response.failure(undefined, 500).send(res)
-    } else {
-      return Response.failure(response.data.message, response.status).send(res)
+router.post(
+  '/',
+  validateRequest(authValidators.mockAuthUsp, async (req, res) => {
+    let response
+    try {
+      response = await Axios.post(
+        'http://localhost:8080/auth/mock-auth-usp',
+        req.body
+      )
+    } catch (e) {
+      const { response } = e
+      if (!response) {
+        return Response.failure(undefined, 500).send(res)
+      } else {
+        return Response.failure(response.data.message, response.status).send(
+          res
+        )
+      }
     }
-  }
-  const user = response.data.data
-  const dbUser = await UserModel.findOne({ nusp: user.nusp })
-  if (!dbUser) {
-    await UserModel.create(user)
-  }
-  delete user.password
-  const token = jwt.create({ nusp: user.nusp })
-  res.setHeader('Authorization', token)
-  Response.success(user).send(res)
-}))
+    const user = response.data.data
+    const dbUser = await UserModel.findOne({ nusp: user.nusp })
+    if (!dbUser) {
+      await UserModel.create(user)
+    }
+    delete user.password
+    const token = jwt.create({ nusp: user.nusp })
+    res.setHeader('Authorization', token)
+    Response.success(user).send(res)
+  })
+)
 
 // get user - user privileges
 router.get('/', (req, res) => {
