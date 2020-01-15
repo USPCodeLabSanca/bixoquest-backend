@@ -15,6 +15,10 @@ app.use(cors({
 }))
 app.use(Routes)
 
+app.get('/', (req, res) => {
+  return res.send('Bem-Vind@ a API do BixoQuest')
+})
+
 // Local Url
 // const backendUrl = "mongodb://localhost:27017/BixoQuest";
 
