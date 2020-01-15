@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
   const newMission = new MissionModel()
 
   newMission.title = req.body.title
+  newMission.location_reference = req.body.location_reference
   newMission.description = req.body.description
   newMission.number_stickers = req.body.number_stickers
   newMission.lat = req.body.lat

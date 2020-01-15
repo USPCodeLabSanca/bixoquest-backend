@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const missionSchema = mongoose.Schema(
   {
     title: String,
+    location_reference: String,
     description: String,
     number_stickers: Number,
     lat: Number,
