@@ -17,6 +17,11 @@ module.exports.isString = curry((errorMessage, thing) => {
   return thing
 })
 
+module.exports.isNumber = curry((errorMessage, thing) => {
+  if (typeof thing !== 'number') error(errorMessage)
+  return thing
+})
+
 module.exports.onlyContainsNumbers = curry((errorMessage, thing) => {
   if (thing.match(/\D/)) error(errorMessage)
   return thing

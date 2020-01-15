@@ -1,26 +1,48 @@
 const { Router } = require('express')
+
+const { isPointWithinRadius } = require('geolib')
+
 const MissionModel = require('../models/mission')
 const Response = require('../lib/response')
+const { validateRequestQuery, missionValidators } = require('../lib/validators')
 
 const router = Router()
 
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   const missions = await MissionModel.find()
 
-  Response.success(missions).send(res)
+  return Response.success(missions).send(res)
 })
 
 router.get('/:id', async (req, res) => {
   const mission = await MissionModel.findById({ _id: req.params.id })
 
   if (!mission) {
-    Response.failure(500)
+    return Response.failure(500)
       .send('Não encontrou missão com esse id', 404)
       .send(res)
   }
 
-  Response.success(mission).send(res)
+  return Response.success(mission).send(res)
 })
+
+router.get(
+  '/',
+  validateRequestQuery(missionValidators.mission, async (req, res) => {
+    const { lat, lng } = req.query
+    const missions = await MissionModel.find()
+
+    const nearMissions = missions.filter(mission => {
+      return isPointWithinRadius(
+        { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+        { latitude: mission.lat, longitude: mission.lng },
+        100
+      )
+    })
+
+    return Response.success(nearMissions).send(res)
+  })
+)
 
 router.post('/', async (req, res) => {
   const newMission = new MissionModel()
@@ -38,7 +60,7 @@ router.post('/', async (req, res) => {
 
   await newMission.save()
 
-  Response.success(newMission).send(res)
+  return Response.success(newMission).send(res)
 })
 
 module.exports = router
