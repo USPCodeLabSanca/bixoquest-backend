@@ -15,6 +15,10 @@ app.use(cors({
 }))
 app.use(Routes)
 
+app.get('/', (req, res) => {
+  return res.send('Bem-Vind@ a API do BixoQuest')
+})
+
 // Local Url
 // const backendUrl = "mongodb://localhost:27017/BixoQuest";
 
@@ -22,7 +26,7 @@ app.use(Routes)
 // const backendUrl = "mongodb://mongo:27017/BixoQuest";
 
 // MongoAtlas Url
-const backendUrl = "mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority";
+const backendUrl = 'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority'
 
 mongoose.connect(
   backendUrl,
