@@ -3,8 +3,10 @@ const { Router } = require('express')
 const { isPointWithinRadius } = require('geolib')
 
 const MissionModel = require('../models/mission')
+const UserModel = require('../models/user')
 const Response = require('../lib/response')
 const { validateRequestQuery, missionValidators } = require('../lib/validators')
+const jwt = require('../lib/jwt')
 
 const router = Router()
 
@@ -18,9 +20,7 @@ router.get('/:id', async (req, res) => {
   const mission = await MissionModel.findById({ _id: req.params.id })
 
   if (!mission) {
-    return Response.failure(500)
-      .send('Não encontrou missão com esse id', 404)
-      .send(res)
+    return Response.failure('Não encontrou missão com esse id', 404).send(res)
   }
 
   return Response.success(mission).send(res)
@@ -42,6 +42,39 @@ router.get(
 
     return Response.success(nearMissions).send(res)
   })
+)
+
+router.post(
+  '/:id/complete',
+  async (req, res) => {
+    const { lat, lng } = req.body
+    const { id } = req.params
+    const token = req.header('Authorization').split(' ')[1]
+    const userId = jwt.decode(token).id
+
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      return Response.failure('User not found', 400).send(res)
+    }
+
+    const mission = await MissionModel.findById({ _id: id })
+
+    if (!isPointWithinRadius(
+      { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+      { latitude: mission.lat, longitude: mission.lng },
+      50
+    )) {
+      return Response.failure('Out of bound', 400).send(res)
+    }
+
+    if (mission.type === 'location') {
+      console.log(userId)
+      console.log(mission)
+      return Response.success(mission).send(res)
+    }
+
+    return Response.failure('Mission type error', 400).send(res)
+  }
 )
 
 router.post('/', async (req, res) => {

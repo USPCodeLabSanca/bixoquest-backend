@@ -52,8 +52,8 @@ router.post(
       await UserModel.create(user)
     }
     delete user.password
-    const token = jwt.create({ nusp: user.nusp })
-    res.setHeader('Authorization', token)
+    const token = jwt.create({ id: user._id })
+    user.token = token
     Response.success(user).send(res)
   })
 )
