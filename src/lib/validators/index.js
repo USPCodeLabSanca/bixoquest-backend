@@ -1,4 +1,5 @@
 const authValidators = require('./auth')
+const missionValidators = require('./mission')
 const { curry } = require('../functional-utils')
 const Response = require('../response')
 
@@ -17,5 +18,6 @@ const validateRequest = curry((validator, handler, req, res) => {
 
 module.exports = {
   authValidators,
+  missionValidators,
   validateRequest
 }
