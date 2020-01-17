@@ -12,8 +12,15 @@ const router = Router()
 
 router.get('/all', async (req, res) => {
   const missions = await MissionModel.find()
+  const missionsWithoutLatLng = []
 
-  return Response.success(missions).send(res)
+  missions.map(({ _doc: mission }, index) => {
+    missionsWithoutLatLng.push(mission)
+    delete missionsWithoutLatLng[index].lat
+    delete missionsWithoutLatLng[index].lng
+  })
+
+  return Response.success(missionsWithoutLatLng).send(res)
 })
 
 router.get('/:id', async (req, res) => {
@@ -68,9 +75,13 @@ router.post(
     }
 
     if (mission.type === 'location') {
-      console.log(userId)
-      console.log(mission)
-      return Response.success(mission).send(res)
+      if (!user.completed_missions.includes(mission._id)) {
+        user.completed_missions.push(mission._id)
+        user.save()
+        return Response.success(mission).send(res)
+      } else {
+        return Response.failure('Mission already done', 400).send(res)
+      }
     }
 
     return Response.failure('Mission type error', 400).send(res)

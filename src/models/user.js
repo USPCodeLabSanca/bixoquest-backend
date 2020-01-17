@@ -3,11 +3,12 @@ const ObjectID = Mongoose.Schema.Types.ObjectId
 
 const userSchema = Mongoose.Schema(
   {
+    _id: ObjectID,
     nusp: String,
-    password: String,
     name: String,
     course: String,
-    _id: ObjectID
+    completed_missions: Array,
+    stickers: Array
   },
   { collection: 'users' }
 )

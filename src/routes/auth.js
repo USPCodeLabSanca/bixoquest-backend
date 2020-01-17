@@ -15,13 +15,18 @@ router.post(
   '/mock-auth-usp',
   validateRequest(authValidators.mockAuthUsp, async (req, res) => {
     const { nusp, password } = req.body
+
     const user = await UserUspModel.findOne({ nusp })
+
     if (!user) {
       return Response.failure('Invalid credentials', 401).send(res)
     }
     if (user.password !== password) {
       return Response.failure('Invalid credentials', 401).send(res)
     }
+
+    delete user.password
+
     Response.success(user).send(res)
   })
 )
@@ -51,7 +56,6 @@ router.post(
     if (!dbUser) {
       await UserModel.create(user)
     }
-    delete user.password
     const token = jwt.create({ id: user._id })
     user.token = token
     Response.success(user).send(res)
