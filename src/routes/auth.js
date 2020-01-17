@@ -53,11 +53,12 @@ router.post(
     }
     const user = response.data.data
     const dbUser = await UserModel.findOne({ nusp: user.nusp })
+
     if (!dbUser) {
       await UserModel.create(user)
     }
-    const token = jwt.create({ id: user._id })
-    user.token = token
+    user.token = jwt.create({ id: user._id })
+
     Response.success(user).send(res)
   })
 )
