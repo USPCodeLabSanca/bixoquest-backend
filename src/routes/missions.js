@@ -6,7 +6,7 @@ const MissionModel = require('../models/mission')
 const UserModel = require('../models/user')
 const Response = require('../lib/response')
 const { validateRequestQuery, missionValidators } = require('../lib/validators')
-const jwt = require('../lib/jwt')
+const { withAuthorization } = require('../lib/jwt')
 
 const router = Router()
 
@@ -53,11 +53,10 @@ router.get(
 
 router.post(
   '/:id/complete',
-  async (req, res) => {
+  withAuthorization(async (req, res) => {
     const { lat, lng } = req.body
     const { id } = req.params
-    const token = req.header('Authorization').split(' ')[1]
-    const userId = jwt.decode(token).id
+    const { id: userId } = req.auth
 
     const user = await UserModel.findById(userId)
     if (!user) {
@@ -85,7 +84,7 @@ router.post(
     }
 
     return Response.failure('Mission type error', 400).send(res)
-  }
+  })
 )
 
 router.post('/', async (req, res) => {
