@@ -43,23 +43,12 @@ function decode (token) {
   return JWT.decode(removeBearerFromToken(token))
 }
 
-/** This H.O.F. (Higher Order Function) verifies if a token is valid in the specific
-request. If the token is valid, it populates `req.auth` with it's payload, and already
-creates a refresh token to ben sent. If it's invalid, automatically returns a 401
-error response */
+/** This H.O.F. (Higher Order Function) verifies if a valid token was given to the
+request. If no token is give, automatically returns a 401 error response */
 function withAuthorization (handler) {
   return (req, res, next) => {
-    const authFail = res => Response.failure('Authorization required', 401).send(res)
-
-    const token = req.headers.authorization // extract token
-    if (!token) return authFail()
-    const payload = verify(token) // extract payload
-    if (!payload) return authFail()
-    req.auth = payload // populate `req.auth` with the payload
-    res.setHeader('authorization', create({ id: payload.id })) // refresh token
-
     if (req.auth) return handler(req, res, next)
-    else return authFail()
+    else return Response.failure('Authorization required', 401).send(res)
   }
 }
 
