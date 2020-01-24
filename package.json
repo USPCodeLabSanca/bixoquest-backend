@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "bixoquest-backend",
   "main": "src/index.js",
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard",
     "dev": "nodemon"
   },
   "repository": {
@@ -18,10 +24,17 @@
   },
   "homepage": "https://github.com/USPCodeLabSanca/bixoquest-backend#readme",
   "devDependencies": {
+    "husky": "^4.0.1",
+    "nodemon": "^2.0.2",
     "standard": "^14.3.1"
   },
   "dependencies": {
+    "axios": "^0.19.0",
+    "bcrypt": "^3.0.7",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "geolib": "^3.2.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.3"
   }
 }
