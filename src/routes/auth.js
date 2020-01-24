@@ -1,7 +1,5 @@
 const { Router } = require('express')
 
-const { default: Axios } = require('axios')
-
 const Response = require('../lib/response')
 const { validateRequest, authValidators } = require('../lib/validators')
 const UserModel = require('../models/user')
@@ -12,52 +10,30 @@ const router = Router()
 
 // Login user
 router.post(
-  '/mock-auth-usp',
-  validateRequest(authValidators.mockAuthUsp, async (req, res) => {
-    const { nusp, password } = req.body
-
-    const user = await UserUspModel.findOne({ nusp })
-
-    if (!user) {
-      return Response.failure('Invalid credentials', 401).send(res)
-    }
-    if (user.password !== password) {
-      return Response.failure('Invalid credentials', 401).send(res)
-    }
-
-    delete user.password
-
-    Response.success(user).send(res)
-  })
-)
-
-// Login user
-router.post(
   '/',
   validateRequest(authValidators.mockAuthUsp, async (req, res) => {
-    let response
-    try {
-      response = await Axios.post(
-        'http://localhost:8080/auth/mock-auth-usp',
-        req.body
-      )
-    } catch (e) {
-      const { response } = e
-      if (!response) {
-        return Response.failure(undefined, 500).send(res)
-      } else {
-        return Response.failure(response.data.message, response.status).send(
-          res
-        )
-      }
+    const { nusp, password } = req.body
+    const userUsp = await UserUspModel.findOne({ nusp }).catch(e => {
+      Response.failure('Error fetching UserUsp from db', 500).send(res)
+      throw new Error()
+    })
+
+    if (!userUsp || userUsp.password !== password) {
+      return Response.failure('Invalid credentials', 401).send(res)
     }
-    const uspUser = response.data.data
-    let { _doc: user } = await UserModel.findOne({ nusp: uspUser.nusp })
+
+    let { _doc: user } = await UserModel.findOne({ nusp }).catch(e => {
+      Response.failure('Error fetching user from db', 500).send(res)
+      throw new Error()
+    })
 
     if (!user) {
-      user = await UserModel.create(user)
+      user = await UserModel.create(user).catch(e => {
+        Response.failure('Error creating user in db', 500).send(res)
+        throw new Error()
+      })
     }
-    user.token = jwt.create({ id: user._id })
+    res.setHeader('authorization', jwt.create({ id: user._id }))
 
     Response.success(user).send(res)
   })
