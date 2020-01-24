@@ -51,11 +51,11 @@ router.post(
         )
       }
     }
-    const user = response.data.data
-    const dbUser = await UserModel.findOne({ nusp: user.nusp })
+    const uspUser = response.data.data
+    let { _doc: user } = await UserModel.findOne({ nusp: uspUser.nusp })
 
-    if (!dbUser) {
-      await UserModel.create(user)
+    if (!user) {
+      user = await UserModel.create(user)
     }
     user.token = jwt.create({ id: user._id })
 

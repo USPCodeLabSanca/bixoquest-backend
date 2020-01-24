@@ -4,6 +4,7 @@ const process = require('process')
 const cors = require('cors')
 
 const Routes = require('./routes')
+const jwt = require('./lib/jwt')
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -15,6 +16,18 @@ app.use(
     origin: '*'
   })
 )
+/* This middleware function handles tokens. If a token is passed, it verifies if
+it's valid. If the token is valid, it populates `req.auth` with it's payload, and
+already creates a refresh token to ben sent. */
+app.use((req, res, next) => {
+  const token = req.headers.authorization // extract token
+  if (!token) return next()
+  const payload = jwt.verify(token) // extract payload
+  if (!payload) return next()
+  req.auth = payload // populate `req.auth` with the payload
+  res.setHeader('authorization', jwt.create({ id: payload.id })) // refresh token
+  return next()
+})
 app.use(Routes)
 
 app.get('/', (req, res) => {
