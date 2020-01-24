@@ -8,8 +8,8 @@ const missionSchema = mongoose.Schema(
     number_stickers: Number,
     lat: Number,
     lng: Number,
-    available_at: Date,
-    expirate_at: Date,
+    available_at: Number,
+    expirate_at: Number,
     key: String,
     type: String
   },
