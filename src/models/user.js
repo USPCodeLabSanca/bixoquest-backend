@@ -8,7 +8,8 @@ const userSchema = Mongoose.Schema(
     name: String,
     course: String,
     completed_missions: Array,
-    packs: Number,
+    available_packs: Number,
+    opened_packs: Number,
     stickers: Array
   },
   { collection: 'users' }

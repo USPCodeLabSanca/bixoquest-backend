@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
   const mission = await MissionModel.findById({ _id: req.params.id })
 
   if (!mission) {
-    return Response.failure('Não encontrou missão com esse id', 404).send(res)
+    return Response.failure('Não foi encontrada missão com esse id', 404).send(res)
   }
 
   return Response.success(mission).send(res)
@@ -60,7 +60,7 @@ router.post(
 
     const user = await UserModel.findById(userId)
     if (!user) {
-      return Response.failure('User not found', 400).send(res)
+      return Response.failure('Usuário não encontrado', 404).send(res)
     }
 
     const mission = await MissionModel.findById({ _id: id })
@@ -70,21 +70,21 @@ router.post(
       { latitude: mission.lat, longitude: mission.lng },
       50
     )) {
-      return Response.failure('Out of bound', 400).send(res)
+      return Response.failure('Fora do campo da missão', 400).send(res)
     }
 
     if (mission.type === 'location') {
       if (!user.completed_missions.includes(mission._id)) {
         user.completed_missions.push(mission._id)
-        user.packs += mission.number_of_packs
+        user.available_packs += mission.number_of_packs
         user.save()
         return Response.success(mission).send(res)
       } else {
-        return Response.failure('Mission already done', 400).send(res)
+        return Response.failure('Missão já realizada', 400).send(res)
       }
     }
 
-    return Response.failure('Mission type error', 400).send(res)
+    return Response.failure('Erro no tipo da missão', 400).send(res)
   })
 )
 

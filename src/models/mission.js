@@ -1,7 +1,9 @@
-const mongoose = require('mongoose')
+const Mongoose = require('mongoose')
+const ObjectID = Mongoose.Schema.Types.ObjectId
 
-const missionSchema = mongoose.Schema(
+const missionSchema = Mongoose.Schema(
   {
+    _id: ObjectID,
     title: String,
     location_reference: String,
     description: String,
@@ -11,9 +13,12 @@ const missionSchema = mongoose.Schema(
     available_at: Number,
     expirate_at: Number,
     key: String,
-    type: String
+    type: {
+      type: String,
+      enum: ['location', 'qrcode', 'password']
+    }
   },
   { collection: 'missions' }
 )
 
-module.exports = mongoose.model('missions', missionSchema)
+module.exports = Mongoose.model('missions', missionSchema)
