@@ -9,7 +9,7 @@ const router = Router()
 const NUMBER_OF_STICKERS = 30
 
 router.post(
-  '/packs/open',
+  '/open',
   withAuthorization(async (req, res) => {
     const { id: userId } = req.auth
 
