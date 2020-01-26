@@ -5,7 +5,7 @@ const missionSchema = mongoose.Schema(
     title: String,
     location_reference: String,
     description: String,
-    number_stickers: Number,
+    number_of_packs: Number,
     lat: Number,
     lng: Number,
     available_at: Number,

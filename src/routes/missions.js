@@ -76,6 +76,7 @@ router.post(
     if (mission.type === 'location') {
       if (!user.completed_missions.includes(mission._id)) {
         user.completed_missions.push(mission._id)
+        user.packs += mission.number_of_packs
         user.save()
         return Response.success(mission).send(res)
       } else {
