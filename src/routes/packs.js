@@ -18,7 +18,7 @@ router.post(
       return Response.failure('Usuário não encontrado', 404).send(res)
     }
 
-    if (user.packs < 1) {
+    if (user.available_packs < 1) {
       return Response.failure('Sem pacotes disponíveis', 400).send(res)
     }
 
