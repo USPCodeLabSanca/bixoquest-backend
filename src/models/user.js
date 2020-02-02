@@ -7,6 +7,7 @@ const userSchema = Mongoose.Schema(
     _id: ObjectID,
     nusp: String,
     name: String,
+    isAdmin: Boolean,
     course: String,
     completed_missions: Array,
     available_packs: Number,

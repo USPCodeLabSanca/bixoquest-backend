@@ -39,19 +39,4 @@ router.post(
   }),
 );
 
-// get user - user privileges
-router.get('/', (req, res) => {
-  Response.success().send(res);
-});
-
-// delete user - user privileges
-router.delete('/', (req, res) => {
-  Response.success().send(res);
-});
-
-// patch user - user privileges
-router.patch('/', (req, res) => {
-  Response.success().send(res);
-});
-
 module.exports = router;
