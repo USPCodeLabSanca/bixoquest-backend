@@ -1,12 +1,10 @@
 const { Router } = require('express');
-const authRouter = require('./auth');
-const backofficeRouter = require('./backoffice/index');
+const userRouter = require('./users');
 const missionRouter = require('./missions');
 
 const router = Router();
 
-router.use('/auth', authRouter);
-router.use('/backoffice', backofficeRouter);
+router.use('/users', userRouter);
 router.use('/missions', missionRouter);
 
 module.exports = router;

@@ -1,5 +1,6 @@
-const Mongoose = require('mongoose')
-const ObjectID = Mongoose.Schema.Types.ObjectId
+const Mongoose = require('mongoose');
+
+const ObjectID = Mongoose.Schema.Types.ObjectId;
 
 const userSchema = Mongoose.Schema(
   {
@@ -7,9 +8,9 @@ const userSchema = Mongoose.Schema(
     password: String,
     name: String,
     course: String,
-    _id: ObjectID
+    _id: ObjectID,
   },
-  { collection: 'users-usp' }
-)
+  { collection: 'users-usp' },
+);
 
-module.exports = Mongoose.model('users-usp', userSchema)
+module.exports = Mongoose.model('users-usp', userSchema);

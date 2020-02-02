@@ -1,16 +1,20 @@
-const Mongoose = require('mongoose')
-const ObjectID = Mongoose.Schema.Types.ObjectId
+const Mongoose = require('mongoose');
+
+const ObjectID = Mongoose.Schema.Types.ObjectId;
 
 const userSchema = Mongoose.Schema(
   {
     _id: ObjectID,
     nusp: String,
     name: String,
+    isAdmin: Boolean,
     course: String,
     completed_missions: Array,
-    stickers: Array
+    available_packs: Number,
+    opened_packs: Number,
+    stickers: Array,
   },
-  { collection: 'users' }
-)
+  { collection: 'users' },
+);
 
-module.exports = Mongoose.model('users', userSchema)
+module.exports = Mongoose.model('users', userSchema);
