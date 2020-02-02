@@ -1,5 +1,6 @@
-const Mongoose = require('mongoose')
-const ObjectID = Mongoose.Schema.Types.ObjectId
+const Mongoose = require('mongoose');
+
+const ObjectID = Mongoose.Schema.Types.ObjectId;
 
 const userSchema = Mongoose.Schema(
   {
@@ -10,9 +11,9 @@ const userSchema = Mongoose.Schema(
     completed_missions: Array,
     available_packs: Number,
     opened_packs: Number,
-    stickers: Array
+    stickers: Array,
   },
-  { collection: 'users' }
-)
+  { collection: 'users' },
+);
 
-module.exports = Mongoose.model('users', userSchema)
+module.exports = Mongoose.model('users', userSchema);
