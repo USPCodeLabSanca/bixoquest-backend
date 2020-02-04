@@ -2,7 +2,7 @@ const { Router } = require('express');
 const authRouter = require('./auth');
 const backofficeRouter = require('./backoffice/index');
 const missionRouter = require('./missions');
-const packRouter = require('./packs')
+const packRouter = require('./packs');
 
 const router = Router();
 

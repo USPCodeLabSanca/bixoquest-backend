@@ -19,7 +19,7 @@ router.post(
     }
 
     if (user.available_packs < 1) {
-      return Response.failure('Sem pacotes disponíveis', 400).send(res)
+      return Response.failure('Sem pacotes disponíveis', 400).send(res);
     }
 
     const stickerId = Math.floor(Math.random() * NUMBER_OF_STICKERS);
