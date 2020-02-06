@@ -13,6 +13,7 @@ const userSchema = Mongoose.Schema(
     available_packs: Number,
     opened_packs: Number,
     stickers: Array,
+    lastTrade: String,
   },
   { collection: 'users' },
 );

@@ -2,13 +2,13 @@ const { Router } = require('express');
 
 const { withAuthorization } = require('../lib/jwt');
 
-const PacksController = require('../controllers/packs');
+const StickersController = require('../controllers/stickers');
 
 const router = Router();
 
 router.post(
-  '/packs/open',
-  withAuthorization(PacksController.openPack),
+  '/donate',
+  withAuthorization(StickersController.donate),
 );
 
 module.exports = router;
