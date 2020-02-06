@@ -7,7 +7,7 @@ const PacksController = require('../controllers/packs');
 const router = Router();
 
 router.post(
-  '/packs/open',
+  '/open',
   withAuthorization(PacksController.openPack),
 );
 
