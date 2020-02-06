@@ -17,9 +17,9 @@ module.exports.donate = async (req, res) => {
     });
   }
 
-  const stickersCopy = user.stickers.slice();
+  const stickersCopy = [...user.stickers];
 
-  stickers.map((sticker) => {
+  stickers.forEach((sticker) => {
     if (stickersCopy.indexOf(sticker) >= 0) {
       stickersCopy.splice(stickersCopy.indexOf(sticker), 1);
     }
