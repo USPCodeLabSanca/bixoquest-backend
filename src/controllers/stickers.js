@@ -70,5 +70,5 @@ module.exports.receive = async (req, res) => {
   donator.save();
   receiver.save();
 
-  return Response.success(receiver).send(res);
+  return Response.success({ donatorName: donator.name }).send(res);
 };

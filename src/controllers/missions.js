@@ -52,23 +52,26 @@ module.exports.completeMission = async (req, res) => {
 
   const mission = await MissionModel.findById({ _id: id });
 
-  if (!isPointWithinRadius(
-    { latitude: parseFloat(lat), longitude: parseFloat(lng) },
-    { latitude: mission.lat, longitude: mission.lng },
-    50,
-  )) {
-    return Response.failure('Fora do campo da missão', 400).send(res);
+  if (!['location', 'qrcode', 'key'].includes(mission.type)) {
+    return Response.failure('Erro no tipxo da missão', 400).send(res);
   }
 
   if (mission.type === 'location') {
-    if (!user.completed_missions.includes(mission._id)) {
-      user.completed_missions.push(mission._id);
-      user.available_packs += mission.number_of_packs;
-      user.save();
-      return Response.success(mission).send(res);
+    if (!isPointWithinRadius(
+      { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+      { latitude: mission.lat, longitude: mission.lng },
+      50,
+    )) {
+      return Response.failure('Fora do campo da missão', 400).send(res);
     }
-    return Response.failure('Missão já realizada', 400).send(res);
   }
 
-  return Response.failure('Erro no tipo da missão', 400).send(res);
+  if (!user.completed_missions.includes(mission._id)) {
+    user.completed_missions.push(mission._id);
+    user.available_packs += mission.number_of_packs;
+    user.save();
+    return Response.success(mission).send(res);
+  }
+
+  return Response.failure('Missão já realizada', 400).send(res);
 };
