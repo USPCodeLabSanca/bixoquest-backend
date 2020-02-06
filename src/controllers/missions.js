@@ -1,8 +1,15 @@
 const { isPointWithinRadius } = require('geolib');
+const ObjectId = require('mongodb').ObjectID;
 
 const MissionModel = require('../models/mission');
 const UserModel = require('../models/user');
 const Response = require('../lib/response');
+
+module.exports.getMissions = async (req, res) => {
+  const missions = await MissionModel.find();
+
+  return Response.success(missions).send(res);
+};
 
 module.exports.getAllMissions = async (req, res) => {
   const missions = await MissionModel.find();
@@ -18,10 +25,15 @@ module.exports.getAllMissions = async (req, res) => {
 };
 
 module.exports.getMission = async (req, res) => {
-  const mission = await MissionModel.findById({ _id: req.params.id });
+  const { id } = req.params;
+
+  const mission = await MissionModel.findById({ _id: id });
 
   if (!mission) {
-    return Response.failure('Não foi encontrada missão com esse id', 404).send(res);
+    return Response.failure(
+      `Não foi encontrada missão com o id ${id}`,
+      404,
+    ).send(res);
   }
 
   return Response.success(mission).send(res);
@@ -74,4 +86,80 @@ module.exports.completeMission = async (req, res) => {
   }
 
   return Response.failure('Missão já realizada', 400).send(res);
+};
+
+module.exports.createMission = async (req, res) => {
+  const {
+    title,
+    location_reference,
+    description,
+    number_of_packs,
+    lat,
+    lng,
+    available_at,
+    expirate_at,
+    key,
+    type,
+  } = req.body;
+
+  const newMission = new MissionModel();
+
+  newMission._id = new ObjectId();
+  newMission.title = title;
+  newMission.location_reference = location_reference;
+  newMission.description = description;
+  newMission.number_of_packs = number_of_packs;
+  newMission.lat = lat;
+  newMission.lng = lng;
+  newMission.available_at = available_at;
+  newMission.expirate_at = expirate_at;
+  newMission.key = key;
+  newMission.type = type;
+
+  await newMission.save();
+
+  return Response.success(newMission).send(res);
+};
+
+module.exports.editMission = async (req, res) => {
+  const { id } = req.params;
+  const {
+    title,
+    location_reference,
+    description,
+    number_of_packs,
+    lat,
+    lng,
+    available_at,
+    expirate_at,
+    key,
+    type,
+  } = req.body;
+
+  const editedMission = await MissionModel.findByIdAndUpdate(
+    id,
+    {
+      title,
+      location_reference,
+      description,
+      number_of_packs,
+      lat,
+      lng,
+      available_at,
+      expirate_at,
+      key,
+      type,
+    },
+    { new: true },
+  );
+
+  return Response.success(editedMission).send(res);
+};
+
+module.exports.deleteMission = async (req, res) => {
+  const { id } = req.params;
+
+  const deletedMission = await MissionModel.findByIdAndDelete(id);
+
+  return Response.success(deletedMission).send(res);
 };

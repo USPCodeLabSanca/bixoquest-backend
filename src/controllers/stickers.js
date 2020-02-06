@@ -11,12 +11,6 @@ module.exports.donate = async (req, res) => {
     return Response.failure('Usuário não encontrado', 404).send(res);
   }
 
-  if (user.lastTrade) {
-    jwt.decode(user.lastTrade).stickers.forEach((sticker) => {
-      user.stickers.push(sticker);
-    });
-  }
-
   const stickersCopy = [...user.stickers];
 
   stickers.forEach((sticker) => {
@@ -51,6 +45,9 @@ module.exports.receive = async (req, res) => {
   const donator = await UserModel.findById(decodedToken.userId);
   if (!donator) {
     return Response.failure('Doador não encontrado', 404).send(res);
+  }
+  if (donator.lastTrade !== token) {
+    return Response.failure('Troca não existente', 404).send(res);
   }
   const beforeTradeNumberOfCards = donator.stickers.length;
 
