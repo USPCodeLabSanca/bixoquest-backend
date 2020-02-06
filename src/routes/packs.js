@@ -8,7 +8,7 @@ const router = Router();
 
 router.post(
   '/packs/open',
-  withAuthorization(PacksController.openPack)
+  withAuthorization(PacksController.openPack),
 );
 
 module.exports = router;
