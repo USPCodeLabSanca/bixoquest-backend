@@ -11,22 +11,14 @@ module.exports.donate = async (req, res) => {
     return Response.failure('Usuário não encontrado', 404).send(res);
   }
 
-  const stickersCopy = [...user.stickers];
-
-  stickers.forEach((sticker) => {
-    if (stickersCopy.indexOf(sticker) >= 0) {
-      stickersCopy.splice(stickersCopy.indexOf(sticker), 1);
-    }
-  });
-
-  if (user.stickers.length - stickersCopy.length < stickers.length) {
+  if (stickers.some(sticker => user.stickers.indexOf(sticker) === -1)) {
     return Response.failure('Você não possui essas figurinhas', 400).send(res);
   }
 
   const token = jwt.create({ isMission: false, userId: user._id, stickers });
 
   user.lastTrade = token;
-  user.save();
+  await user.save();
 
   return Response.success(token).send(res);
 };
@@ -64,8 +56,10 @@ module.exports.receive = async (req, res) => {
     return Response.failure('O doador não possui essas figurinhas', 400).send(res);
   }
 
-  donator.save();
-  receiver.save();
+  await Promise.all([
+    donator.save(),
+    receiver.save()
+  ])
 
   return Response.success({ donatorName: donator.name }).send(res);
 };
