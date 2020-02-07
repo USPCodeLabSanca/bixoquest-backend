@@ -11,7 +11,7 @@ module.exports.donate = async (req, res) => {
     return Response.failure('Usuário não encontrado', 404).send(res);
   }
 
-  if (stickers.some(sticker => user.stickers.indexOf(sticker) === -1)) {
+  if (stickers.some((sticker) => user.stickers.indexOf(sticker) === -1)) {
     return Response.failure('Você não possui essas figurinhas', 400).send(res);
   }
 
@@ -58,8 +58,8 @@ module.exports.receive = async (req, res) => {
 
   await Promise.all([
     donator.save(),
-    receiver.save()
-  ])
+    receiver.save(),
+  ]);
 
   return Response.success({ donatorName: donator.name }).send(res);
 };
