@@ -3,6 +3,21 @@ const ObjectId = require('mongodb').ObjectID;
 const UserModel = require('../models/user');
 const Response = require('../lib/response');
 
+module.exports.getLoggedUser = async (req, res) => {
+  const { id } = req.auth;
+
+  const user = await UserModel.findById({ _id: id });
+
+  if (!user) {
+    return Response.failure(
+      `Usuário não encontrado`,
+      404,
+    ).send(res);
+  }
+
+  return Response.success(user).send(res);
+};
+
 module.exports.getUsers = async (req, res) => {
   const users = await UserModel.find();
 
