@@ -6,7 +6,9 @@ const Response = require('../lib/response');
 module.exports.getLoggedUser = async (req, res) => {
   const { id } = req.auth;
 
-  const user = await UserModel.findById({ _id: id });
+  const user = await UserModel
+    .findById({ _id: id })
+    .select('nusp name course completed_missions available_packs opened_packs stickers -_id');
 
   if (!user) {
     return Response.failure(
