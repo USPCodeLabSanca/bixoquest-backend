@@ -10,7 +10,7 @@ module.exports.getLoggedUser = async (req, res) => {
 
   if (!user) {
     return Response.failure(
-      `Usuário não encontrado`,
+      'Usuário não encontrado',
       404,
     ).send(res);
   }
