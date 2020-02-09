@@ -44,13 +44,29 @@ function decode(token) {
 }
 
 /** This H.O.F. (Higher Order Function) verifies if a valid token was given to the
-request. If no token is give, automatically returns a 401 error response */
-function withAuthorization(handler) {
+request. If no token is give, automatically returns a 401 error response.
+It yet receives a boolean to  verify if the token is of a normal or an admin user, and if the function
+can be accessed by a common user */
+function withAuthorization (handler, onlyAdmin) {
+
+
   return (req, res, next) => {
-    if (req.auth) return handler(req, res, next);
-    return Response.failure('Authorization required', 401).send(res);
-  };
+    if (req.auth) {
+      
+      const { isAdmin } = req.auth
+      //const { isAdmin } = decode(req.auth)
+
+      if(isAdmin) return handler(req, res, next)
+
+      if(!onlyAdmin) return handler(req,res, next)
+
+      return Response.failure('Admin Permission Required', 401).send(res)
+      
+    }
+    else return Response.failure('Authorization required', 401).send(res)
+  }
 }
+
 
 module.exports = {
   create,
