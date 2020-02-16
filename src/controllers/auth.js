@@ -2,6 +2,7 @@ const ObjectId = require('mongodb').ObjectID;
 
 const UserModel = require('../models/user');
 const jwt = require('../lib/jwt');
+const Response = require('../lib/response');
 
 module.exports.authenticateUser = async (data, cb) => {
   const user = JSON.parse(data).loginUsuario;
@@ -38,23 +39,29 @@ module.exports.authenticateUser = async (data, cb) => {
 };
 
 module.exports.authenticationSuccess = async (req, res) => {
+  if (!req.cookies.session) {
+    return Response.failure('Cookie não pode ser vazio.', 403).send(res);
+  }
+
+  if (!req.user) {
+    return Response.failure('Usuário não encontrado', 403).send(res);
+  }
+
   const authorization = jwt.create({ id: req.user._id });
 
-  if (req.user) {
-    res.json({
-      success: true,
-      message: 'Usuário autenticado com sucesso.',
-      user: req.user,
-      token: authorization,
-    });
-  }
+  return Response.success({
+    success: true,
+    message: 'Usuário autenticado com sucesso.',
+    user: req.user,
+    token: authorization,
+  }).send(res);
 };
 
 module.exports.authenticationFailure = async (req, res) => {
-  res.status(401).json({
+  return Response.failure({
     success: false,
     message: 'Falha ao autenticar usuário.',
-  });
+  }, 403).send(res);
 };
 
 module.exports.logout = async (req, res) => {
