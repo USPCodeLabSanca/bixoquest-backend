@@ -43,7 +43,7 @@ passport.use('provider', new OAuth1Strategy({
   userAuthorizationURL: process.env.OAUTH_USER_AUTHORIZATION_URL,
   consumerKey: process.env.OAUTH_CONSUMER_KEY,
   consumerSecret: process.env.OAUTH_CONSUMER_SECRET,
-  callbackURL: '/auth/redirect',
+  callbackURL: '/api/auth/redirect',
 }, (token, tokenSecret, profile, done) => {
   const oauth = new OAuth.OAuth(
     process.env.OAUTH_REQUEST_TOKEN_URL,
@@ -78,6 +78,14 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
+
+app.get('/api/auth/', passport.authenticate('provider'));
+
+app.get('/api/auth/redirect', passport.authenticate('provider', {
+  successRedirect: process.env.FRONTEND_URL,
+  failureRedirect: '/api/auth/failure',
+}));
+
 
 /* This middleware function handles tokens. If a token is passed, it verifies if
 it's valid. If the token is valid, it populates `req.auth` with it's payload, and
