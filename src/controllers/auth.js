@@ -1,31 +1,63 @@
-const Response = require('../lib/response');
+const ObjectId = require('mongodb').ObjectID;
+
 const UserModel = require('../models/user');
-const UserUspModel = require('../models/user-usp');
 const jwt = require('../lib/jwt');
 
-module.exports.loginUser = async (req, res) => {
-  const { nusp, password } = req.body;
-  const userUsp = await UserUspModel.findOne({ nusp }).catch(() => {
-    Response.failure('Error fetching UserUsp from db', 500).send(res);
-    throw new Error();
-  });
+module.exports.authenticateUser = async (data, cb) => {
+  const user = JSON.parse(data).loginUsuario;
+  const currentUser = await UserModel.findOne({ nusp: user.loginUsuario });
 
-  if (!userUsp || userUsp.password !== password) {
-    return Response.failure('Invalid credentials', 401).send(res);
+  if (!currentUser) {
+    const newUser = new UserModel();
+
+    newUser._id = new ObjectId();
+    newUser.nusp = user.loginUsuario;
+    newUser.name = user.nomeUsuario;
+    newUser.isAdmin = false;
+    newUser.course = user.siglaUnidade;
+    newUser.completed_missions = [];
+    newUser.available_packs = 0;
+    newUser.opened_packs = 0;
+    newUser.stickers = [];
+    newUser.lastTrade = null;
+
+    await newUser.save();
+
+    delete newUser.isAdmin;
+    delete newUser.lastTrade;
+
+    if (newUser) {
+      cb(null, newUser);
+    }
   }
 
-  let { _doc: user } = await UserModel.findOne({ nusp }).catch(() => {
-    Response.failure('Error fetching user from db', 500).send(res);
-    throw new Error();
-  });
+  delete currentUser.isAdmin;
+  delete currentUser.lastTrade;
 
-  if (!user) {
-    user = await UserModel.create(user).catch(() => {
-      Response.failure('Error creating user in db', 500).send(res);
-      throw new Error();
+  cb(null, currentUser);
+};
+
+module.exports.authenticationSuccess = async (req, res) => {
+  const authorization = jwt.create({ id: req.user._id });
+
+  if (req.user) {
+    res.json({
+      success: true,
+      message: 'Usuário autenticado com sucesso.',
+      user: req.user,
+      token: authorization,
     });
   }
-  res.setHeader('authorization', jwt.create({ id: user._id }));
+};
 
-  Response.success(user).send(res);
+module.exports.authenticationFailure = async (req, res) => {
+  res.status(401).json({
+    success: false,
+    message: 'Falha ao autenticar usuário.',
+  });
+};
+
+module.exports.logout = async (req, res) => {
+  req.logout();
+  res.redirect(process.env.FRONTEND_URL);
 };
