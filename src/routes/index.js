@@ -14,8 +14,8 @@ const StickersController = require('../controllers/stickers');
 
 const router = Router();
 
-router.use('/auth', authRouter);
 router.use('/backoffice', backofficeRouter);
+router.use('/auth', authRouter);
 router.use('/user', userRouter);
 router.use('/packs', packRouter);
 router.use('/missions', missionsRouter);

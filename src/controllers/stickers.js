@@ -1,5 +1,5 @@
-const Response = require('../lib/response');
 const UserModel = require('../models/user');
+const Response = require('../lib/response');
 const jwt = require('../lib/jwt');
 
 module.exports.donate = async (req, res) => {

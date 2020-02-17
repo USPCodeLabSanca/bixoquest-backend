@@ -4,6 +4,7 @@ const ObjectId = require('mongodb').ObjectID;
 const MissionModel = require('../models/mission');
 const UserModel = require('../models/user');
 const Response = require('../lib/response');
+const jwt = require('../lib/jwt');
 
 module.exports.getMissions = async (req, res) => {
   const missions = await MissionModel.find();
@@ -53,19 +54,19 @@ module.exports.getNearMissions = async (req, res) => {
 };
 
 module.exports.completeMission = async (req, res) => {
-  const { lat, lng } = req.body;
+  const { lat, lng, key } = req.body;
   const { id } = req.params;
   const { id: userId } = req.auth;
 
   const user = await UserModel.findById(userId);
   if (!user) {
-    return Response.failure('Usuário não encontrado', 404).send(res);
+    return Response.failure('Usuário não encontrado.', 404).send(res);
   }
 
   const mission = await MissionModel.findById({ _id: id });
 
   if (!['location', 'qrcode', 'key'].includes(mission.type)) {
-    return Response.failure('Erro no tipxo da missão', 400).send(res);
+    return Response.failure('Erro no tipo da missão.', 400).send(res);
   }
 
   if (mission.type === 'location') {
@@ -74,7 +75,11 @@ module.exports.completeMission = async (req, res) => {
       { latitude: mission.lat, longitude: mission.lng },
       50,
     )) {
-      return Response.failure('Fora do campo da missão', 400).send(res);
+      return Response.failure('Fora do campo da missão.', 400).send(res);
+    }
+  } else if (mission.type === 'key') {
+    if (mission.key !== key) {
+      return Response.failure('Senha incorreta.', 400).send(res);
     }
   }
 
@@ -104,7 +109,9 @@ module.exports.createMission = async (req, res) => {
 
   const newMission = new MissionModel();
 
-  newMission._id = new ObjectId();
+  const missionId = new ObjectId();
+
+  newMission._id = missionId;
   newMission.title = title;
   newMission.location_reference = location_reference;
   newMission.description = description;
@@ -113,8 +120,12 @@ module.exports.createMission = async (req, res) => {
   newMission.lng = lng;
   newMission.available_at = available_at;
   newMission.expirate_at = expirate_at;
-  newMission.key = key;
   newMission.type = type;
+  if (type === 'qrcode') {
+    newMission.key = jwt.create({ isMission: true, missionId });
+  } else {
+    newMission.key = key;
+  }
 
   await newMission.save();
 
