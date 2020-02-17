@@ -35,7 +35,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(
   cors({
-    origin: env.FRONTEND_URL,
+    origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
     exposedHeaders: ['authorization'],
     credentials: true,
   }),
