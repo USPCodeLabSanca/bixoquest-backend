@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const process = require('process');
 const path = require('path');
 const cors = require('cors');
 const passport = require('passport');

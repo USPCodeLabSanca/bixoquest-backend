@@ -4,6 +4,26 @@ const UserModel = require('../models/user');
 const jwt = require('../lib/jwt');
 const Response = require('../lib/response');
 
+module.exports.loginAdmin = async (req, res) => {
+  const { key } = req.body;
+
+  if (key !== process.env.ADMIN_KEY) {
+    return Response.failure('Senha incorreta.', 403).send(res);
+  }
+
+  const currentUser = await UserModel.findOne({ nusp: key });
+
+  const token = jwt.create({ id: currentUser._id });
+  res.setHeader('authorization', token);
+
+  return Response.success({
+    success: true,
+    message: 'Administrador autenticado com sucesso.',
+    user: currentUser,
+    token,
+  }).send(res);
+};
+
 module.exports.authenticateUser = async (data, cb) => {
   const user = JSON.parse(data).loginUsuario;
   const currentUser = await UserModel.findOne({ nusp: user.loginUsuario });
