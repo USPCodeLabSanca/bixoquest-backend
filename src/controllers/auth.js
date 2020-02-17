@@ -64,7 +64,7 @@ module.exports.authenticationSuccess = async (req, res) => {
   }
 
   if (!req.user) {
-    return Response.failure('Usuário não encontrado', 403).send(res);
+    return Response.failure('Usuário não encontrado.', 403).send(res);
   }
 
   const authorization = jwt.create({ id: req.user._id });

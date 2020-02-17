@@ -1,8 +1,6 @@
 const JWT = require('jsonwebtoken');
 const Response = require('./response');
 
-const secret = 'very secret secret. secretly guarded.';
-
 /**
  * The token may or may not be prefixed with a 'bearer' string. this function verifies
  * that and strips the sole token.
@@ -26,7 +24,7 @@ function removeBearerFromToken(token) {
  * @returns { string }
  */
 function create(payload) {
-  return JWT.sign(payload, secret, { expiresIn: '7 days' });
+  return JWT.sign(payload, process.env.JWT_SECRET, { expiresIn: '7 days' });
 }
 
 /**
@@ -38,7 +36,7 @@ function create(payload) {
  */
 function verify(token) {
   try {
-    return JWT.verify(removeBearerFromToken(token), secret);
+    return JWT.verify(removeBearerFromToken(token), process.env.JWT_SECRET);
   } catch (e) {
     return null;
   }
