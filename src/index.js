@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const process = require('process');
+const path = require('path');
 const cors = require('cors');
 const passport = require('passport');
 const OAuth1Strategy = require('passport-oauth1');
@@ -17,10 +18,14 @@ const port = process.env.PORT || 8080;
 
 require('dotenv').config();
 
+const { env } = process;
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 // cookieSession config
 app.use(cookieSession({
   name: 'session',
-  keys: [process.env.SESSION_KEY],
+  keys: [env.SESSION_KEY],
   maxAge: 24 * 60 * 60 * 1000, // One day in milliseconds
 }));
 
@@ -31,32 +36,32 @@ app.use(passport.session());
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: env.FRONTEND_URL,
     exposedHeaders: ['authorization'],
     credentials: true,
   }),
 );
 
 passport.use('provider', new OAuth1Strategy({
-  requestTokenURL: process.env.OAUTH_REQUEST_TOKEN_URL,
-  accessTokenURL: process.env.OAUTH_ACCESS_TOKEN_URL,
-  userAuthorizationURL: process.env.OAUTH_USER_AUTHORIZATION_URL,
-  consumerKey: process.env.OAUTH_CONSUMER_KEY,
-  consumerSecret: process.env.OAUTH_CONSUMER_SECRET,
+  requestTokenURL: env.OAUTH_REQUEST_TOKEN_URL,
+  accessTokenURL: env.OAUTH_ACCESS_TOKEN_URL,
+  userAuthorizationURL: env.OAUTH_USER_AUTHORIZATION_URL,
+  consumerKey: env.OAUTH_CONSUMER_KEY,
+  consumerSecret: env.OAUTH_CONSUMER_SECRET,
   callbackURL: '/api/auth/redirect',
 }, (token, tokenSecret, profile, done) => {
   const oauth = new OAuth.OAuth(
-    process.env.OAUTH_REQUEST_TOKEN_URL,
-    process.env.OAUTH_ACCESS_TOKEN_URL,
-    process.env.OAUTH_CONSUMER_KEY,
-    process.env.OAUTH_CONSUMER_SECRET,
+    env.OAUTH_REQUEST_TOKEN_URL,
+    env.OAUTH_ACCESS_TOKEN_URL,
+    env.OAUTH_CONSUMER_KEY,
+    env.OAUTH_CONSUMER_SECRET,
     '1.0',
     null,
     'HMAC-SHA1',
   );
 
   oauth.post(
-    process.env.OAUTH_USER_RESOURCE_URL,
+    env.OAUTH_USER_RESOURCE_URL,
     token,
     tokenSecret,
     null,
@@ -82,7 +87,7 @@ passport.deserializeUser((user, done) => {
 app.get('/api/auth/', passport.authenticate('provider'));
 
 app.get('/api/auth/redirect', passport.authenticate('provider', {
-  successRedirect: process.env.FRONTEND_URL,
+  successRedirect: env.FRONTEND_URL,
   failureRedirect: '/api/auth/failure',
 }));
 
@@ -102,16 +107,16 @@ app.use((req, res, next) => {
 
 app.use('/api', Routes);
 
-app.get('/', (req, res) => res.send('Bem-Vind@ a API do BixoQuest'));
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')));
 
 // Local Url
-// const backendUrl = "mongodb://localhost:27017/BixoQuest";
+// const backendUrl = `mongodb://${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
 
 // Docker Url
-// const backendUrl = "mongodb://mongo:27017/BixoQuest";
+// const backendUrl = `mongodb://${env.MONGO_DOCKER_URL}/${env.MONGO_DOCKER_DB}`;
 
 // MongoAtlas Url
-const backendUrl = 'mongodb+srv://admin:1234567890@cluster0-xcndn.mongodb.net/BixoQuest?retryWrites=true&w=majority';
+const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
