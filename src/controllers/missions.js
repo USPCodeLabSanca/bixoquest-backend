@@ -44,11 +44,16 @@ module.exports.getNearMissions = async (req, res) => {
   const { lat, lng } = req.query;
   const missions = await MissionModel.find();
 
-  const nearMissions = missions.filter((mission) => isPointWithinRadius(
-    { latitude: parseFloat(lat), longitude: parseFloat(lng) },
-    { latitude: mission.lat, longitude: mission.lng },
-    100,
-  ));
+  const nearMissions = missions.filter((mission) => {
+    if (mission.type === 'location') {
+      return isPointWithinRadius(
+        { latitude: parseFloat(lat), longitude: parseFloat(lng) },
+        { latitude: mission.lat, longitude: mission.lng },
+        100,
+      );
+    }
+    return true;
+  });
 
   return Response.success(nearMissions).send(res);
 };
