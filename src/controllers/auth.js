@@ -13,7 +13,7 @@ module.exports.loginAdmin = async (req, res) => {
 
   const currentUser = await UserModel.findOne({ nusp: key });
 
-  const token = jwt.create({ id: currentUser._id });
+  const token = jwt.create({ id: currentUser._id, isAdmin: true });
   res.setHeader('authorization', token);
 
   return Response.success({
@@ -67,7 +67,7 @@ module.exports.authenticationSuccess = async (req, res) => {
     return Response.failure('Usuário não encontrado.', 403).send(res);
   }
 
-  const authorization = jwt.create({ id: req.user._id });
+  const authorization = jwt.create({ id: req.user._id, isAdmin: false });
 
   return Response.success({
     success: true,
