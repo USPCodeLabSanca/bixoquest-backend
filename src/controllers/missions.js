@@ -45,6 +45,9 @@ module.exports.getNearMissions = async (req, res) => {
   const missions = await MissionModel.find();
 
   const nearMissions = missions.filter((mission) => {
+    if (new Date() < mission.available_at || new Date() > mission.expirate_at) {
+      return false;
+    }
     if (mission.type === 'location') {
       return isPointWithinRadius(
         { latitude: parseFloat(lat), longitude: parseFloat(lng) },
@@ -72,6 +75,10 @@ module.exports.completeMission = async (req, res) => {
 
   if (!['location', 'qrcode', 'key'].includes(mission.type)) {
     return Response.failure('Erro no tipo da missão.', 400).send(res);
+  }
+
+  if (new Date() < mission.available_at || new Date() > mission.expirate_at) {
+    return Response.failure('Missão não disponível.', 400).send(res);
   }
 
   if (mission.type === 'location') {

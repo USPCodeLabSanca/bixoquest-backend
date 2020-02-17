@@ -25,7 +25,7 @@ module.exports.loginAdmin = async (req, res) => {
 };
 
 module.exports.authenticateUser = async (data, cb) => {
-  const user = JSON.parse(data).loginUsuario;
+  const user = JSON.parse(data);
   const currentUser = await UserModel.findOne({ nusp: user.loginUsuario });
 
   if (!currentUser) {
@@ -35,7 +35,7 @@ module.exports.authenticateUser = async (data, cb) => {
     newUser.nusp = user.loginUsuario;
     newUser.name = user.nomeUsuario;
     newUser.isAdmin = false;
-    newUser.course = user.siglaUnidade;
+    newUser.course = user.vinculo || user.vinculo[0] || user.vinculo[0].siglaUnidade;
     newUser.completed_missions = [];
     newUser.available_packs = 0;
     newUser.opened_packs = 0;
