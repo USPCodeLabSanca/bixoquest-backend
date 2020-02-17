@@ -109,13 +109,13 @@ app.use('/api', Routes);
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')));
 
 // Local Url
-// const backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
+const backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
 
 // Docker Url
 // const backendUrl = `mongodb://${env.MONGO_DOCKER_URL}/${env.MONGO_DOCKER_DB}`;
 
 // MongoAtlas Url
-const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+// const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
