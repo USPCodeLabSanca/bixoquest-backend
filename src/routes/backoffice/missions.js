@@ -1,17 +1,18 @@
 const { Router } = require('express');
 
 const MissionsController = require('../../controllers/missions');
+const { withAuthorization } = require('../../lib/jwt');
 
 const router = Router();
 
-router.get('/', MissionsController.getMissions);
+router.get('/', withAuthorization(MissionsController.getMissions, true));
 
-router.get('/:id', MissionsController.getMission);
+router.get('/:id', withAuthorization(MissionsController.getMission, true));
 
-router.post('/', MissionsController.createMission);
+router.post('/', withAuthorization(MissionsController.createMission, true));
 
-router.put('/:id', MissionsController.editMission);
+router.put('/:id', withAuthorization(MissionsController.editMission, true));
 
-router.delete('/:id', MissionsController.deleteMission);
+router.delete('/:id', withAuthorization(MissionsController.deleteMission, true));
 
 module.exports = router;

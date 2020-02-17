@@ -7,13 +7,16 @@ const MissionsController = require('../controllers/missions');
 
 const router = Router();
 
-router.get('/all', MissionsController.getAllMissions);
+router.get('/all', withAuthorization(MissionsController.getAllMissions));
 
-router.get('/:id', MissionsController.getMission);
+router.get('/:id', withAuthorization(MissionsController.getMission));
 
 router.get(
   '/',
-  validateRequestQuery(missionValidators.mission, MissionsController.getNearMissions),
+  validateRequestQuery(
+    missionValidators.mission,
+    withAuthorization(MissionsController.getNearMissions),
+  ),
 );
 
 router.post(

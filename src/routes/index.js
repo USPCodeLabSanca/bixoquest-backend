@@ -3,7 +3,7 @@ const { Router } = require('express');
 const authRouter = require('./auth');
 const backofficeRouter = require('./backoffice/index');
 const userRouter = require('./users');
-const packRouter = require('./packs');
+const packsRouter = require('./packs');
 const missionsRouter = require('./missions');
 const stickersRouter = require('./stickers');
 const { withAuthorization } = require('../lib/jwt');
@@ -17,7 +17,7 @@ const router = Router();
 router.use('/backoffice', backofficeRouter);
 router.use('/auth', authRouter);
 router.use('/user', userRouter);
-router.use('/packs', packRouter);
+router.use('/packs', packsRouter);
 router.use('/missions', missionsRouter);
 router.use('/stickers', stickersRouter);
 
