@@ -100,7 +100,7 @@ app.use((req, res, next) => {
   const payload = jwt.verify(token); // extract payload
   if (!payload) return next();
   req.auth = payload; // populate `req.auth` with the payload
-  res.setHeader('authorization', jwt.create({ id: payload.id })); // refresh token
+  res.setHeader('authorization', jwt.create(payload)); // refresh token
   return next();
 });
 
