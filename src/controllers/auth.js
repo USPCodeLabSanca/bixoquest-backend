@@ -77,12 +77,11 @@ module.exports.authenticationSuccess = async (req, res) => {
   }).send(res);
 };
 
-module.exports.authenticationFailure = async (req, res) => {
-  return Response.failure({
-    success: false,
-    message: 'Falha ao autenticar usuário.',
-  }, 403).send(res);
-};
+module.exports.authenticationFailure = async (req, res) => Response.failure({
+  success: false,
+  message: 'Falha ao autenticar usuário.',
+}, 403).send(res);
+
 
 module.exports.logout = async (req, res) => {
   req.logout();
