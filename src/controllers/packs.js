@@ -1,7 +1,7 @@
 const UserModel = require('../models/user');
 const Response = require('../lib/response');
 
-const NUMBER_OF_STICKERS = 30;
+const NUMBER_OF_STICKERS = 36;
 
 module.exports.openPack = async (req, res) => {
   const { id: userId } = req.auth;
