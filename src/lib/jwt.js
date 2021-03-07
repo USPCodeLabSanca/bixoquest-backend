@@ -10,7 +10,7 @@ const Response = require('./response');
  *
  * @argument { string } token
  *
- * @returns { string }
+ * @return { string }
  */
 function removeBearerFromToken(token) {
   return token.indexOf(' ') !== -1 ? token.split(' ')[1] : token;
@@ -21,10 +21,10 @@ function removeBearerFromToken(token) {
  *
  * @argument { object } payload
  *
- * @returns { string }
+ * @return { string }
  */
 function create(payload) {
-  return JWT.sign(payload, process.env.JWT_SECRET, { expiresIn: '7 days' });
+  return JWT.sign(payload, process.env.JWT_SECRET, {expiresIn: '7 days'});
 }
 
 /**
@@ -32,7 +32,7 @@ function create(payload) {
  *
  * @argument { string } token
  *
- * @returns { object }
+ * @return { object }
  */
 function verify(token) {
   try {
@@ -47,7 +47,7 @@ function verify(token) {
  *
  * @argument {string} token
  *
- * @returns {object}
+ * @return {object}
  */
 function decode(token) {
   return JWT.decode(removeBearerFromToken(token));
@@ -59,13 +59,15 @@ function decode(token) {
  * It yet receives a boolean to  verify if the token is of a normal or an admin user,
  * and if the function can be accessed by a common user.
  *
- * @param {() => void} handler
+ * @param {function} handler
  * @param {boolean} onlyAdmin
+ *
+ * @return {function}
  */
 function withAuthorization(handler, onlyAdmin) {
   return (req, res, next) => {
     if (req.auth) {
-      const { isAdmin } = req.auth;
+      const {isAdmin} = req.auth;
 
       if (isAdmin) {
         return handler(req, res, next);

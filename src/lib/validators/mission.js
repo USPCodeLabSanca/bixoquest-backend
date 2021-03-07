@@ -1,4 +1,4 @@
-const { compose } = require('../functional-utils');
+const {compose} = require('../functional-utils');
 const {
   isNotEmpty,
   isRequired,
@@ -8,13 +8,13 @@ const {
 } = require('./common');
 
 const validateQueryCoordinate = compose(
-  isString('Coordinate must be a string'),
-  isNotEmpty('Coordinate cannot be empty'),
-  isRequired('Coordinate is required'),
+    isString('Coordinate must be a string'),
+    isNotEmpty('Coordinate cannot be empty'),
+    isRequired('Coordinate is required'),
 );
 
 module.exports.mission = compose(
-  objectShouldBeEmpty(),
-  mapAndDeleteKey('lat', validateQueryCoordinate),
-  mapAndDeleteKey('lng', validateQueryCoordinate),
+    objectShouldBeEmpty(),
+    mapAndDeleteKey('lat', validateQueryCoordinate),
+    mapAndDeleteKey('lng', validateQueryCoordinate),
 );

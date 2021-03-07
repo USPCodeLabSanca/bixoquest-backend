@@ -1,6 +1,8 @@
-const { curry } = require('../functional-utils');
+const {curry} = require('../functional-utils');
 
-const error = (message) => { throw new Error(message); };
+const error = (message) => {
+  throw new Error(message);
+};
 
 module.exports.isRequired = curry((errorMessage, thing) => {
   if (thing === undefined) error(errorMessage);
@@ -44,7 +46,7 @@ module.exports.matchRegex = curry((regex, errorMessage, thing) => {
 
 module.exports.mapAndDeleteKey = curry((key, func, object) => {
   func(object[key]);
-  const newObject = { ...object };
+  const newObject = {...object};
   delete newObject[key];
   return newObject;
 });

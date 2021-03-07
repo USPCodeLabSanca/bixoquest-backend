@@ -17,9 +17,9 @@ const port = process.env.PORT || 8080;
 
 require('dotenv').config();
 
-const { env } = process;
+const {env} = process;
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../../bixoquest/build')));
 
 // cookieSession config
 app.use(cookieSession({
@@ -34,11 +34,11 @@ app.use(passport.session());
 
 app.use(express.json());
 app.use(
-  cors({
-    origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
-    exposedHeaders: ['authorization'],
-    credentials: true,
-  }),
+    cors({
+      origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
+      exposedHeaders: ['authorization'],
+      credentials: true,
+    }),
 );
 
 passport.use('provider', new OAuth1Strategy({
@@ -50,28 +50,28 @@ passport.use('provider', new OAuth1Strategy({
   callbackURL: '/api/auth/redirect',
 }, (token, tokenSecret, profile, done) => {
   const oauth = new OAuth.OAuth(
-    env.OAUTH_REQUEST_TOKEN_URL,
-    env.OAUTH_ACCESS_TOKEN_URL,
-    env.OAUTH_CONSUMER_KEY,
-    env.OAUTH_CONSUMER_SECRET,
-    '1.0',
-    null,
-    'HMAC-SHA1',
+      env.OAUTH_REQUEST_TOKEN_URL,
+      env.OAUTH_ACCESS_TOKEN_URL,
+      env.OAUTH_CONSUMER_KEY,
+      env.OAUTH_CONSUMER_SECRET,
+      '1.0',
+      null,
+      'HMAC-SHA1',
   );
 
   oauth.post(
-    env.OAUTH_USER_RESOURCE_URL,
-    token,
-    tokenSecret,
-    null,
-    null,
-    async (err, data) => {
-      if (err) {
-        console.error(err);
-      }
+      env.OAUTH_USER_RESOURCE_URL,
+      token,
+      tokenSecret,
+      null,
+      null,
+      async (err, data) => {
+        if (err) {
+          console.error(err);
+        }
 
-      AuthController.authenticateUser(data, done);
-    },
+        AuthController.authenticateUser(data, done);
+      },
   );
 }));
 
@@ -100,7 +100,7 @@ app.use((req, res, next) => {
   const payload = jwt.verify(token); // extract payload
   if (!payload) return next();
   req.auth = payload; // populate `req.auth` with the payload
-  res.setHeader('authorization', jwt.create({ id: payload.id, isAdmin: payload.isAdmin })); // refresh token
+  res.setHeader('authorization', jwt.create({id: payload.id, isAdmin: payload.isAdmin})); // refresh token
   return next();
 });
 
@@ -108,14 +108,10 @@ app.use('/api', Routes);
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')));
 
-// Local Url
-const backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
-
-// Docker Url
-// const backendUrl = `mongodb://${env.MONGO_DOCKER_URL}/${env.MONGO_DOCKER_DB}`;
-
-// MongoAtlas Url
-// const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+let backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+if (env.NODE_ENV === 'production') {
+  backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
+}
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
