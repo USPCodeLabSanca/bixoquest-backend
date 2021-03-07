@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy Strapi app
+      - name: Deploy Express app
         uses: appleboy/ssh-action@v0.1.2
         with:
           host: ${{secrets.SSH_HOST}}
@@ -25,4 +25,4 @@ jobs:
             cd bixoquest-backend
             git pull origin main
             npm install
-            npm run start
+            pm2 restart bixoquest-backend
