@@ -15,6 +15,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.2
         with:
           host: ${{secrets.SSH_HOST}}
+          port: ${{secrets.SSH_PORT}}
           key: ${{secrets.SSH_KEY}}
           username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
@@ -24,4 +25,4 @@ jobs:
             cd bixoquest-backend
             git pull origin main
             npm install
-            pm2 restart 0
+            npm run start
