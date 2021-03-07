@@ -17,7 +17,7 @@ const port = process.env.PORT || 8080;
 
 require('dotenv').config();
 
-const { env } = process;
+const {env} = process;
 
 app.use(express.static(path.join(__dirname, '../../bixoquest/build')));
 
@@ -34,11 +34,11 @@ app.use(passport.session());
 
 app.use(express.json());
 app.use(
-  cors({
-    origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
-    exposedHeaders: ['authorization'],
-    credentials: true,
-  }),
+    cors({
+      origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
+      exposedHeaders: ['authorization'],
+      credentials: true,
+    }),
 );
 
 passport.use('provider', new OAuth1Strategy({
@@ -50,28 +50,28 @@ passport.use('provider', new OAuth1Strategy({
   callbackURL: '/api/auth/redirect',
 }, (token, tokenSecret, profile, done) => {
   const oauth = new OAuth.OAuth(
-    env.OAUTH_REQUEST_TOKEN_URL,
-    env.OAUTH_ACCESS_TOKEN_URL,
-    env.OAUTH_CONSUMER_KEY,
-    env.OAUTH_CONSUMER_SECRET,
-    '1.0',
-    null,
-    'HMAC-SHA1',
+      env.OAUTH_REQUEST_TOKEN_URL,
+      env.OAUTH_ACCESS_TOKEN_URL,
+      env.OAUTH_CONSUMER_KEY,
+      env.OAUTH_CONSUMER_SECRET,
+      '1.0',
+      null,
+      'HMAC-SHA1',
   );
 
   oauth.post(
-    env.OAUTH_USER_RESOURCE_URL,
-    token,
-    tokenSecret,
-    null,
-    null,
-    async (err, data) => {
-      if (err) {
-        console.error(err);
-      }
+      env.OAUTH_USER_RESOURCE_URL,
+      token,
+      tokenSecret,
+      null,
+      null,
+      async (err, data) => {
+        if (err) {
+          console.error(err);
+        }
 
-      AuthController.authenticateUser(data, done);
-    },
+        AuthController.authenticateUser(data, done);
+      },
   );
 }));
 
@@ -100,7 +100,7 @@ app.use((req, res, next) => {
   const payload = jwt.verify(token); // extract payload
   if (!payload) return next();
   req.auth = payload; // populate `req.auth` with the payload
-  res.setHeader('authorization', jwt.create({ id: payload.id, isAdmin: payload.isAdmin })); // refresh token
+  res.setHeader('authorization', jwt.create({id: payload.id, isAdmin: payload.isAdmin})); // refresh token
   return next();
 });
 

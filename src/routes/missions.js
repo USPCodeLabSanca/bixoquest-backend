@@ -1,6 +1,6 @@
-const { Router } = require('express');
+const {Router} = require('express');
 
-const { withAuthorization } = require('../lib/jwt');
+const {withAuthorization} = require('../lib/jwt');
 
 const MissionsController = require('../controllers/mission.controller');
 
@@ -13,8 +13,8 @@ router.get('/:id', withAuthorization(MissionsController.getMission));
 router.get('/', withAuthorization(MissionsController.getNearMissions));
 
 router.post(
-  '/:id/complete',
-  withAuthorization(MissionsController.completeMission),
+    '/:id/complete',
+    withAuthorization(MissionsController.completeMission),
 );
 
 module.exports = router;

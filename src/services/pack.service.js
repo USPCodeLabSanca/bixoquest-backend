@@ -1,5 +1,5 @@
 const UserModel = require('../models/user');
-const createError = require('http-errors')
+const createError = require('http-errors');
 
 const NUMBER_OF_STICKERS = 36;
 

@@ -1,4 +1,4 @@
-const { isPointWithinRadius } = require('geolib');
+const {isPointWithinRadius} = require('geolib');
 const ObjectId = require('mongodb').ObjectID;
 
 const MissionModel = require('../models/mission');
@@ -15,7 +15,7 @@ const missionService = {
     const missions = await MissionModel.find();
     const missionsWithoutLatLng = [];
 
-    missions.map(({ _doc: mission }, index) => {
+    missions.map(({_doc: mission}, index) => {
       missionsWithoutLatLng.push(mission);
       delete missionsWithoutLatLng[index].lat;
       delete missionsWithoutLatLng[index].lng;
@@ -24,7 +24,7 @@ const missionService = {
     return missionsWithoutLatLng;
   },
   getMission: async (id) => {
-    const mission = await MissionModel.findById({ _id: id });
+    const mission = await MissionModel.findById({_id: id});
 
     if (!mission) {
       throw new createError.NotFound(`Não foi encontrada missão com o id ${id}`);
@@ -41,9 +41,9 @@ const missionService = {
       }
       if (mission.type === 'location') {
         return isPointWithinRadius(
-          { latitude: parseFloat(lat), longitude: parseFloat(lng) },
-          { latitude: mission.lat, longitude: mission.lng },
-          100,
+            {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+            {latitude: mission.lat, longitude: mission.lng},
+            100,
         );
       }
       return true;
@@ -57,7 +57,7 @@ const missionService = {
       throw new createError.NotFound('Usuário não encontrado.');
     }
 
-    const mission = await MissionModel.findById({ _id: id });
+    const mission = await MissionModel.findById({_id: id});
 
     if (!['location', 'qrcode', 'key'].includes(mission.type)) {
       throw new createError.BadRequest('Erro no tipo da missão.');
@@ -69,9 +69,9 @@ const missionService = {
 
     if (mission.type === 'location') {
       if (!isPointWithinRadius(
-        { latitude: parseFloat(lat), longitude: parseFloat(lng) },
-        { latitude: mission.lat, longitude: mission.lng },
-        50,
+          {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+          {latitude: mission.lat, longitude: mission.lng},
+          50,
       )) {
         throw new createError.BadRequest('Fora do campo da missão.');
       }
@@ -92,16 +92,16 @@ const missionService = {
     return mission;
   },
   createMission: async (
-    title,
-    location_reference,
-    description,
-    number_of_packs,
-    lat,
-    lng,
-    available_at,
-    expirate_at,
-    key,
-    type
+      title,
+      locationReference,
+      description,
+      numberOfPacks,
+      lat,
+      lng,
+      availableAt,
+      expirateAt,
+      key,
+      type,
   ) => {
     const newMission = new MissionModel();
 
@@ -109,16 +109,16 @@ const missionService = {
 
     newMission._id = missionId;
     newMission.title = title;
-    newMission.location_reference = location_reference;
+    newMission.location_reference = locationReference;
     newMission.description = description;
-    newMission.number_of_packs = number_of_packs;
+    newMission.number_of_packs = numberOfPacks;
     newMission.lat = lat;
     newMission.lng = lng;
-    newMission.available_at = available_at;
-    newMission.expirate_at = expirate_at;
+    newMission.available_at = availableAt;
+    newMission.expirate_at = expirateAt;
     newMission.type = type;
     if (type === 'qrcode') {
-      newMission.key = jwt.create({ isMission: true, missionId });
+      newMission.key = jwt.create({isMission: true, missionId});
     } else {
       newMission.key = key;
     }
@@ -128,33 +128,33 @@ const missionService = {
     return newMission;
   },
   editMission: async (
-    id,
-    title,
-    location_reference,
-    description,
-    number_of_packs,
-    lat,
-    lng,
-    available_at,
-    expirate_at,
-    key,
-    type
+      id,
+      title,
+      locationReference,
+      description,
+      numberOfPacks,
+      lat,
+      lng,
+      availableAt,
+      expirateAt,
+      key,
+      type,
   ) => {
     const editedMission = await MissionModel.findByIdAndUpdate(
-      id,
-      {
-        title,
-        location_reference,
-        description,
-        number_of_packs,
-        lat,
-        lng,
-        available_at,
-        expirate_at,
-        key,
-        type,
-      },
-      { new: true },
+        id,
+        {
+          title,
+          location_reference: locationReference,
+          description,
+          number_of_packs: numberOfPacks,
+          lat,
+          lng,
+          available_at: availableAt,
+          expirate_at: expirateAt,
+          key,
+          type,
+        },
+        {new: true},
     );
 
     return editedMission;

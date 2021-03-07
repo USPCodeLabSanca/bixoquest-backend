@@ -12,7 +12,7 @@ const stickerService = {
       throw new createError.BadRequest('Você não possui essas figurinhas');
     }
 
-    const token = jwt.create({ isMission: false, userId: user._id, stickers });
+    const token = jwt.create({isMission: false, userId: user._id, stickers});
 
     user.lastTrade = token;
     await user.save();

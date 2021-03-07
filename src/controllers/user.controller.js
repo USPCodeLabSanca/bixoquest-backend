@@ -4,7 +4,7 @@ const Response = require('../lib/response');
 const userController = {
   getLoggedUser: async (req, res) => {
     try {
-      const { id } = req.auth;
+      const {id} = req.auth;
 
       const user = await userService.getUserBasicData(id);
 
@@ -24,7 +24,7 @@ const userController = {
   },
   getUser: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
 
       const user = await userService.getUser(id);
 
@@ -51,7 +51,7 @@ const userController = {
   },
   editUser: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
       const {
         nusp,
         name,
@@ -68,7 +68,7 @@ const userController = {
   },
   deleteUser: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
 
       const deletedUser = await userService.deleteUser(id);
 
@@ -76,7 +76,7 @@ const userController = {
     } catch (error) {
       return res.send(error);
     }
-  }
+  },
 };
 
 module.exports = userController;

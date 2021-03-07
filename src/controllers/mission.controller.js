@@ -22,7 +22,7 @@ const missionController = {
   },
   getMission: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
 
       const mission = await missionService.getMission(id);
 
@@ -33,7 +33,7 @@ const missionController = {
   },
   getNearMissions: async (req, res) => {
     try {
-      const { lat, lng } = req.query;
+      const {lat, lng} = req.query;
 
       const nearMissions = await missionService.getNearMissions(lat, lng);
 
@@ -44,9 +44,9 @@ const missionController = {
   },
   completeMission: async (req, res) => {
     try {
-      const { lat, lng, key } = req.body;
-      const { id } = req.params;
-      const { id: userId } = req.auth;
+      const {lat, lng, key} = req.body;
+      const {id} = req.params;
+      const {id: userId} = req.auth;
 
       const mission = await missionService.completeMission(lat, lng, key, id, userId);
 
@@ -59,28 +59,28 @@ const missionController = {
     try {
       const {
         title,
-        location_reference,
+        location_reference: locationReference,
         description,
-        number_of_packs,
+        number_of_packs: numberOfPacks,
         lat,
         lng,
-        available_at,
-        expirate_at,
+        available_at: availableAt,
+        expirate_at: expirateAt,
         key,
         type,
       } = req.body;
 
       const newMission = await missionService.createMission(
-        title,
-        location_reference,
-        description,
-        number_of_packs,
-        lat,
-        lng,
-        available_at,
-        expirate_at,
-        key,
-        type,
+          title,
+          locationReference,
+          description,
+          numberOfPacks,
+          lat,
+          lng,
+          availableAt,
+          expirateAt,
+          key,
+          type,
       );
 
       return Response.success(newMission).send(res);
@@ -90,32 +90,32 @@ const missionController = {
   },
   editMission: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
       const {
         title,
-        location_reference,
+        location_reference: locationReference,
         description,
-        number_of_packs,
+        number_of_packs: numberOfPacks,
         lat,
         lng,
-        available_at,
-        expirate_at,
+        available_at: availableAt,
+        expirate_at: expirateAt,
         key,
         type,
       } = req.body;
 
-      const newMission = await missionService.editedMission(
-        id,
-        title,
-        location_reference,
-        description,
-        number_of_packs,
-        lat,
-        lng,
-        available_at,
-        expirate_at,
-        key,
-        type,
+      const editedMission = await missionService.editedMission(
+          id,
+          title,
+          locationReference,
+          description,
+          numberOfPacks,
+          lat,
+          lng,
+          availableAt,
+          expirateAt,
+          key,
+          type,
       );
 
       return Response.success(editedMission).send(res);
@@ -125,7 +125,7 @@ const missionController = {
   },
   deleteMission: async (req, res) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
 
       const deletedMission = await missionService.deleteMission(id);
 

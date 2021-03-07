@@ -5,15 +5,15 @@ const jwt = require('../lib/jwt');
 const Response = require('../lib/response');
 
 module.exports.loginAdmin = async (req, res) => {
-  const { key } = req.body;
+  const {key} = req.body;
 
   if (key !== process.env.ADMIN_KEY) {
     return Response.failure('Senha incorreta.', 403).send(res);
   }
 
-  const currentUser = await UserModel.findOne({ nusp: key });
+  const currentUser = await UserModel.findOne({nusp: key});
 
-  const token = jwt.create({ id: currentUser._id, isAdmin: true });
+  const token = jwt.create({id: currentUser._id, isAdmin: true});
   res.setHeader('authorization', token);
 
   return Response.success({
@@ -26,7 +26,7 @@ module.exports.loginAdmin = async (req, res) => {
 
 module.exports.authenticateUser = async (data, cb) => {
   const user = JSON.parse(data);
-  const currentUser = await UserModel.findOne({ nusp: user.loginUsuario });
+  const currentUser = await UserModel.findOne({nusp: user.loginUsuario});
 
   if (!currentUser) {
     const newUser = new UserModel();
@@ -67,7 +67,7 @@ module.exports.authenticationSuccess = async (req, res) => {
     return Response.failure('Usuário não encontrado.', 403).send(res);
   }
 
-  const authorization = jwt.create({ id: req.user._id, isAdmin: false });
+  const authorization = jwt.create({id: req.user._id, isAdmin: false});
 
   return Response.success({
     success: true,
