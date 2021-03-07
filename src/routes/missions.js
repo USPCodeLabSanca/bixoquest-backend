@@ -2,7 +2,7 @@ const { Router } = require('express');
 
 const { withAuthorization } = require('../lib/jwt');
 
-const MissionsController = require('../controllers/missions');
+const MissionsController = require('../controllers/mission.controller');
 
 const router = Router();
 

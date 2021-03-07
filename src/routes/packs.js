@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const PacksController = require('../controllers/packs');
+const PacksController = require('../controllers/pack.controller');
 const { withAuthorization } = require('../lib/jwt');
 
 const router = Router();

@@ -9,8 +9,8 @@ const stickersRouter = require('./stickers');
 const { withAuthorization } = require('../lib/jwt');
 const jwt = require('../lib/jwt');
 
-const MissionsController = require('../controllers/missions');
-const StickersController = require('../controllers/stickers');
+const MissionsController = require('../controllers/mission.controller');
+const StickersController = require('../controllers/sticker.controller');
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const UsersController = require('../../controllers/users');
+const UsersController = require('../../controllers/user.controller');
 const { withAuthorization } = require('../../lib/jwt');
 
 const router = Router();
