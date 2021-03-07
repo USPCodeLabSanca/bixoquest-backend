@@ -19,7 +19,7 @@ require('dotenv').config();
 
 const { env } = process;
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../../bixoquest/build')));
 
 // cookieSession config
 app.use(cookieSession({
@@ -108,14 +108,10 @@ app.use('/api', Routes);
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')));
 
-// Local Url
-const backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
-
-// Docker Url
-// const backendUrl = `mongodb://${env.MONGO_DOCKER_URL}/${env.MONGO_DOCKER_DB}`;
-
-// MongoAtlas Url
-// const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+let backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+if (env.NODE_ENV === 'production') {
+  backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
+}
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
