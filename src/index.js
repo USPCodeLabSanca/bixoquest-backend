@@ -106,7 +106,7 @@ app.use((req, res, next) => {
 
 app.use('/api', Routes);
 
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'client/build/index.html')));
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../../bixoquest/build/index.html')));
 
 let backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 if (env.NODE_ENV === 'production') {
