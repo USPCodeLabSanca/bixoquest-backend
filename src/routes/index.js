@@ -1,11 +1,11 @@
 const {Router} = require('express');
 
-const authRouter = require('./auth');
+const authRouter = require('./auth.router');
 const backofficeRouter = require('./backoffice/index');
-const usersRouter = require('./users');
-const packsRouter = require('./packs');
-const missionsRouter = require('./missions');
-const stickersRouter = require('./stickers');
+const usersRouter = require('./user.router');
+const packsRouter = require('./pack.router');
+const missionsRouter = require('./mission.router');
+const stickersRouter = require('./sticker.router');
 const {withAuthorization} = require('../lib/jwt');
 const jwt = require('../lib/jwt');
 

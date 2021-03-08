@@ -9,7 +9,7 @@ const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 
 const Routes = require('./routes');
-const AuthController = require('./controllers/auth');
+const AuthController = require('./controllers/auth.controller');
 const jwt = require('./lib/jwt');
 
 const app = express();
