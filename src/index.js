@@ -7,17 +7,16 @@ const OAuth1Strategy = require('passport-oauth1');
 const OAuth = require('oauth');
 const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
 
 const Routes = require('./routes');
 const AuthController = require('./controllers/auth.controller');
 const jwt = require('./lib/jwt');
 
-const app = express();
-const port = process.env.PORT || 8080;
-
-require('dotenv').config();
-
 const {env} = process;
+
+const app = express();
+const port = env.PORT || 8080;
 
 app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 
