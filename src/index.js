@@ -32,13 +32,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json());
-app.use(
-    cors({
-      origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
-      exposedHeaders: ['authorization'],
-      credentials: true,
-    }),
-);
+app.use(cors({
+  origin: [env.FRONTEND_URL, env.FRONTEND_LOCAL_URL, env.BACKOFFICE_URL, env.BACKOFFICE_LOCAL_URL],
+  exposedHeaders: ['authorization'],
+  credentials: true,
+}));
 
 passport.use('provider', new OAuth1Strategy({
   requestTokenURL: env.OAUTH_REQUEST_TOKEN_URL,
@@ -85,25 +83,19 @@ passport.deserializeUser((user, done) => {
 app.get('/api/auth/', passport.authenticate('provider'));
 
 app.get('/api/auth/redirect', passport.authenticate('provider', {
-  successRedirect: env.FRONTEND_URL,
+  successRedirect: `${env.FRONTEND_URL}/auth-usp`,
   failureRedirect: '/api/auth/failure',
 }));
 
-
-/* This middleware function handles tokens. If a token is passed, it verifies if
-it's valid. If the token is valid, it populates `req.auth` with it's payload, and
-already creates a refresh token to ben sent. */
-app.use((req, res, next) => {
-  const token = req.headers.authorization; // extract token
-  if (!token) return next();
-  const payload = jwt.verify(token); // extract payload
-  if (!payload) return next();
-  req.auth = payload; // populate `req.auth` with the payload
-  res.setHeader('authorization', jwt.create({id: payload.id, isAdmin: payload.isAdmin})); // refresh token
-  return next();
-});
-
 app.use('/api', Routes);
+
+app.use((error, req, res, next) => {
+  // Sets HTTP status code
+  res.status(error.status);
+
+  // Sends response
+  return res.json({message: error.message});
+});
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, env.FRONTEND_PATH, 'index.html')));
 
