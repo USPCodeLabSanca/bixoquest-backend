@@ -4,11 +4,7 @@ const Response = require('../lib/response');
 const userController = {
   getLoggedUser: async (req, res) => {
     try {
-      const {id} = req.auth;
-
-      const user = await userService.getUserBasicData(id);
-
-      return Response.success(user).send(res);
+      return Response.success(req.user).send(res);
     } catch (error) {
       return res.send(error);
     }

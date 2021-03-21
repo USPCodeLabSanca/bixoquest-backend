@@ -1,14 +1,17 @@
 const {Router} = require('express');
 
-const {withAuthorization} = require('../lib/jwt');
-
-const UsersController = require('../controllers/user.controller');
+const AuthController = require('../controllers/auth.controller');
+const UserController = require('../controllers/user.controller');
 
 const router = Router();
 
 router.get(
     '/',
-    withAuthorization(UsersController.getLoggedUser),
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    UserController.getLoggedUser,
 );
 
 module.exports = router;
