@@ -1,0 +1,30 @@
+name: Express Development CI/CD
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Express app
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          port: ${{secrets.SSH_PORT}}
+          key: ${{secrets.SSH_KEY}}
+          username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+
+          script: |
+            cd bixoquest-dev
+            cd bixoquest-backend
+            git pull origin dev
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm install
+            pm2 restart bixoquest-backend-dev
