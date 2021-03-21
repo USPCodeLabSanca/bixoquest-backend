@@ -11,7 +11,6 @@ require('dotenv').config();
 
 const Routes = require('./routes');
 const AuthController = require('./controllers/auth.controller');
-const jwt = require('./lib/jwt');
 
 const {env} = process;
 
@@ -107,6 +106,7 @@ if (env.NODE_ENV === 'production') {
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 mongoose.connection.on('error', (e) => {
