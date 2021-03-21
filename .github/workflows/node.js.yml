@@ -23,6 +23,7 @@ jobs:
           script: |
             cd bixoquest
             cd bixoquest-backend
+            git stash
             git pull origin main
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
