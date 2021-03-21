@@ -59,13 +59,13 @@ const missionController = {
     try {
       const {
         title,
-        location_reference: locationReference,
+        locationReference,
         description,
-        number_of_packs: numberOfPacks,
+        numberOfPacks,
         lat,
         lng,
-        available_at: availableAt,
-        expirate_at: expirateAt,
+        availableAt,
+        expirateAt,
         key,
         type,
       } = req.body;
@@ -93,13 +93,13 @@ const missionController = {
       const {id} = req.params;
       const {
         title,
-        location_reference: locationReference,
+        locationReference,
         description,
-        number_of_packs: numberOfPacks,
+        numberOfPacks,
         lat,
         lng,
-        available_at: availableAt,
-        expirate_at: expirateAt,
+        availableAt,
+        expirateAt,
         key,
         type,
       } = req.body;

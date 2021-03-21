@@ -6,13 +6,13 @@ const missionSchema = Mongoose.Schema(
     {
       _id: ObjectID,
       title: String,
-      location_reference: String,
+      locationReference: String,
       description: String,
-      number_of_packs: Number,
+      numberOfPacks: Number,
       lat: Number,
       lng: Number,
-      available_at: Number,
-      expirate_at: Number,
+      availableAt: Number,
+      expirateAt: Number,
       key: String,
       type: {
         type: String,

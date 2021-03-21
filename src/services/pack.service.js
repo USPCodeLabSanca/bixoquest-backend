@@ -11,13 +11,13 @@ const packService = {
       throw new createError.NotFound('Usuário não encontrado');
     }
 
-    if (user.available_packs < 1) {
+    if (user.availablePacks < 1) {
       throw new createError.BadRequest('Sem pacotes disponíveis');
     }
 
     const stickerId = Math.floor(Math.random() * NUMBER_OF_STICKERS);
-    user.available_packs -= 1;
-    user.opened_packs += 1;
+    user.availablePacks -= 1;
+    user.openedPacks += 1;
     user.stickers.push(stickerId);
     user.save();
 

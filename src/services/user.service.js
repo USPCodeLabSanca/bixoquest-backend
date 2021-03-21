@@ -6,7 +6,7 @@ const userService = {
   getUserBasicData: async (id) => {
     const user = await UserModel
         .findById({_id: id})
-        .select('nusp name course completed_missions available_packs opened_packs stickers -_id');
+        .select('nusp name course completedMissions availablePacks openedPacks stickers -_id');
 
     if (!user) {
       throw new createError.NotFound('Usuário não encontrado');
@@ -36,9 +36,9 @@ const userService = {
     newUser.name = name;
     newUser.isAdmin = isAdmin;
     newUser.course = course;
-    newUser.completed_missions = [];
-    newUser.available_packs = 0;
-    newUser.opened_packs = 0;
+    newUser.completedMissions = [];
+    newUser.availablePacks = 0;
+    newUser.openedPacks = 0;
     newUser.stickers = [];
     newUser.lastTrade = null;
 

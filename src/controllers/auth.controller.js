@@ -273,7 +273,9 @@ module.exports.authenticate = async (req, res, next) => {
       token = token.replace('Bearer ', '');
       const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY).data;
 
-      req.user = await UserModel.findById(decoded.id);
+      const user = await UserModel.findById(decoded.id, '-isAdmin -password -createdAt -updatedAt -__v -resetPasswordCode');
+
+      req.user = user;
     }
 
     next();
@@ -310,9 +312,9 @@ module.exports.authenticateUser = async (data, cb) => {
       name: user.nomeUsuario,
       isAdmin: false,
       course: user.vinculo && user.vinculo[0] && user.vinculo[0].siglaUnidade,
-      completed_missions: [],
-      available_packs: 0,
-      opened_packs: 0,
+      completedMissions: [],
+      availablePacks: 0,
+      openedPacks: 0,
       stickers: [],
       lastTrade: null,
     });

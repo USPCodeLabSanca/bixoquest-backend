@@ -8,7 +8,7 @@ const packController = {
 
       const stickerId = await packService.openPack(userId);
 
-      return Response.success({sticker_id: stickerId}).send(res);
+      return Response.success({stickerId: stickerId}).send(res);
     } catch (error) {
       return res.send(error);
     }

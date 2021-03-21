@@ -37,13 +37,13 @@ const UserSchema = Mongoose.Schema(
         type: String,
         default: 'Não informado',
       },
-      completed_missions: {
+      completedMissions: {
         type: Array,
       },
-      available_packs: {
+      availablePacks: {
         type: Number,
       },
-      opened_packs: {
+      openedPacks: {
         type: Number,
       },
       stickers: {

@@ -36,7 +36,7 @@ const missionService = {
     const missions = await MissionModel.find();
 
     const nearMissions = missions.filter((mission) => {
-      if (new Date() < mission.available_at || new Date() > mission.expirate_at) {
+      if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
         return false;
       }
       if (mission.type === 'location') {
@@ -63,7 +63,7 @@ const missionService = {
       throw new createError.BadRequest('Erro no tipo da missão.');
     }
 
-    if (new Date() < mission.available_at || new Date() > mission.expirate_at) {
+    if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
       throw new createError.BadRequest('Missão não disponível.');
     }
 
@@ -81,12 +81,12 @@ const missionService = {
       }
     }
 
-    if (user.completed_missions.includes(mission._id)) {
+    if (user.completedMissions.includes(mission._id)) {
       throw new createError.BadRequest('Missão já realizada');
     }
 
-    user.completed_missions.push(mission._id);
-    user.available_packs += mission.number_of_packs;
+    user.completedMissions.push(mission._id);
+    user.availablePacks += mission.numberOfPacks;
     user.save();
 
     return mission;
@@ -109,13 +109,13 @@ const missionService = {
 
     newMission._id = missionId;
     newMission.title = title;
-    newMission.location_reference = locationReference;
+    newMission.locationReference = locationReference;
     newMission.description = description;
-    newMission.number_of_packs = numberOfPacks;
+    newMission.numberOfPacks = numberOfPacks;
     newMission.lat = lat;
     newMission.lng = lng;
-    newMission.available_at = availableAt;
-    newMission.expirate_at = expirateAt;
+    newMission.availableAt = availableAt;
+    newMission.expirateAt = expirateAt;
     newMission.type = type;
     if (type === 'qrcode') {
       newMission.key = jwt.create({isMission: true, missionId});
@@ -144,13 +144,13 @@ const missionService = {
         id,
         {
           title,
-          location_reference: locationReference,
+          locationReference,
           description,
-          number_of_packs: numberOfPacks,
+          numberOfPacks,
           lat,
           lng,
-          available_at: availableAt,
-          expirate_at: expirateAt,
+          availableAt,
+          expirateAt,
           key,
           type,
         },
