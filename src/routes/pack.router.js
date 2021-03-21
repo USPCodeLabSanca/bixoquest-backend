@@ -1,13 +1,17 @@
 const {Router} = require('express');
 
+const AuthController = require('../controllers/auth.controller');
 const PacksController = require('../controllers/pack.controller');
-const {withAuthorization} = require('../lib/jwt');
 
 const router = Router();
 
 router.post(
     '/open',
-    withAuthorization(PacksController.openPack),
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    PacksController.openPack,
 );
 
 module.exports = router;

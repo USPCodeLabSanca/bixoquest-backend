@@ -1,20 +1,44 @@
 const {Router} = require('express');
 
-const {withAuthorization} = require('../lib/jwt');
-
+const AuthController = require('../controllers/auth.controller');
 const MissionsController = require('../controllers/mission.controller');
 
 const router = Router();
 
-router.get('/all', withAuthorization(MissionsController.getAllMissions));
+router.get(
+    '/all',
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    MissionsController.getAllMissions,
+);
 
-router.get('/:id', withAuthorization(MissionsController.getMission));
+router.get(
+    '/:id',
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    MissionsController.getMission,
+);
 
-router.get('/', withAuthorization(MissionsController.getNearMissions));
+router.get(
+    '/',
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    MissionsController.getNearMissions,
+);
 
 router.post(
     '/:id/complete',
-    withAuthorization(MissionsController.completeMission),
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    MissionsController.completeMission,
 );
 
 module.exports = router;

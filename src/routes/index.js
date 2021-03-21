@@ -6,9 +6,9 @@ const usersRouter = require('./user.router');
 const packsRouter = require('./pack.router');
 const missionsRouter = require('./mission.router');
 const stickersRouter = require('./sticker.router');
-const {withAuthorization} = require('../lib/jwt');
 const jwt = require('../lib/jwt');
 
+const AuthController = require('../controllers/auth.controller');
 const MissionsController = require('../controllers/mission.controller');
 const StickersController = require('../controllers/sticker.controller');
 
@@ -23,7 +23,11 @@ router.use('/stickers', stickersRouter);
 
 router.post(
     '/qrcode/scan',
-    withAuthorization((req, res) => {
+    [
+      AuthController.authenticate,
+      AuthController.isAuthenticated,
+    ],
+    (req, res) => {
       const {token} = req.body;
 
       const decodedToken = jwt.decode(token);
@@ -34,7 +38,7 @@ router.post(
       } else {
         StickersController.receive(req, res);
       }
-    }),
+    },
 );
 
 module.exports = router;
