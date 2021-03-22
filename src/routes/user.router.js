@@ -14,4 +14,13 @@ router.get(
     UserController.getLoggedUser,
 );
 
+router.get(
+    '/:id',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    UserController.getUserProfile,
+);
+
 module.exports = router;

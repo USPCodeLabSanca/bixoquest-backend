@@ -5,11 +5,22 @@ const UserModel = require('../models/user');
 const userService = {
   getUserBasicData: async (id) => {
     const user = await UserModel
-        .findById({_id: id})
+        .findById(id)
         .select('nusp name course completedMissions availablePacks openedPacks stickers -_id');
 
     if (!user) {
       throw new createError.NotFound('Usuário não encontrado');
+    }
+
+    return user;
+  },
+  getUserProfile: async (id) => {
+    const user = await UserModel
+        .findById(id)
+        .select('name course -_id');
+
+    if (!user) {
+      throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
     }
 
     return user;
@@ -19,8 +30,8 @@ const userService = {
 
     return users;
   },
-  getUsers: async (id) => {
-    const user = await UserModel.findById({_id: id});
+  getUser: async (id) => {
+    const user = await UserModel.findById(id);
 
     if (!user) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
