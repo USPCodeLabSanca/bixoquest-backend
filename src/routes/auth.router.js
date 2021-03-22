@@ -52,15 +52,6 @@ router.post(
     AuthController.resetPassword,
 );
 
-router.get(
-    '/me',
-    [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-    ],
-    AuthController.getLoggedUser,
-);
-
 router.get('/success', AuthController.authenticationSuccess);
 
 router.get('/failure', AuthController.authenticationFailure);

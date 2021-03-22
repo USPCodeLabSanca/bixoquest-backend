@@ -255,20 +255,6 @@ module.exports.resetPassword = async (req, res, next) => {
   }
 };
 
-module.exports.getLoggedUser = async (req, res, next) => {
-  try {
-    return res.status(200).json(formatUserResponse(req.user));
-  } catch (error) {
-    console.log(error);
-
-    if (!createError.isHttpError(error)) {
-      error = new createError.InternalServerError('Erro no servidor.');
-    }
-
-    return next(error);
-  }
-};
-
 module.exports.authenticateUser = async (data, cb) => {
   const user = JSON.parse(data);
   const currentUser = await UserModel.findOne({
