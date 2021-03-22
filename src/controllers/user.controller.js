@@ -1,10 +1,9 @@
 const userService = require('../services/user.service');
-const Response = require('../lib/response');
 
 const userController = {
   getLoggedUser: async (req, res) => {
     try {
-      return Response.success(req.user).send(res);
+      return res.status(200).json(req.user);
     } catch (error) {
       return res.send(error);
     }
@@ -13,7 +12,7 @@ const userController = {
     try {
       const users = await userService.getUsers();
 
-      return Response.success(users).send(res);
+      return res.status(200).json(users);
     } catch (error) {
       return res.send(error);
     }
@@ -24,7 +23,7 @@ const userController = {
 
       const user = await userService.getUser(id);
 
-      return Response.success(user).send(res);
+      return res.status(200).json(user);
     } catch (error) {
       return res.send(error);
     }
@@ -40,7 +39,7 @@ const userController = {
 
       const newUser = await userService.createUser(nusp, name, isAdmin, course);
 
-      return Response.success(newUser).send(res);
+      return res.status(200).json(newUser);
     } catch (error) {
       return res.send(error);
     }
@@ -57,7 +56,7 @@ const userController = {
 
       const editedUser = await userService.editUser(id, nusp, name, isAdmin, course);
 
-      return Response.success(editedUser).send(res);
+      return res.status(200).json(editedUser);
     } catch (error) {
       return res.send(error);
     }
@@ -68,7 +67,7 @@ const userController = {
 
       const deletedUser = await userService.deleteUser(id);
 
-      return Response.success(deletedUser).send(res);
+      return res.status(200).json(deletedUser);
     } catch (error) {
       return res.send(error);
     }

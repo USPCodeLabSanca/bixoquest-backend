@@ -1,12 +1,11 @@
 const missionService = require('../services/mission.service');
-const Response = require('../lib/response');
 
 const missionController = {
   getMissions: async (req, res) => {
     try {
       const missions = await missionService.getMissions();
 
-      return Response.success(missions).send(res);
+      return res.status(200).json(missions);
     } catch (error) {
       return res.send(error);
     }
@@ -15,7 +14,7 @@ const missionController = {
     try {
       const missionsWithoutLatLng = await missionService.getAllMissions();
 
-      return Response.success(missionsWithoutLatLng).send(res);
+      return res.status(200).json(missionsWithoutLatLng);
     } catch (error) {
       return res.send(error);
     }
@@ -26,7 +25,7 @@ const missionController = {
 
       const mission = await missionService.getMission(id);
 
-      return Response.success(mission).send(res);
+      return res.status(200).json(mission);
     } catch (error) {
       return res.send(error);
     }
@@ -37,7 +36,7 @@ const missionController = {
 
       const nearMissions = await missionService.getNearMissions(lat, lng);
 
-      return Response.success(nearMissions).send(res);
+      return res.status(200).json(nearMissions);
     } catch (error) {
       return res.send(error);
     }
@@ -50,7 +49,7 @@ const missionController = {
 
       const mission = await missionService.completeMission(lat, lng, key, id, userId);
 
-      return Response.success(mission).send(res);
+      return res.status(200).json(mission);
     } catch (error) {
       return res.send(error);
     }
@@ -83,7 +82,7 @@ const missionController = {
           type,
       );
 
-      return Response.success(newMission).send(res);
+      return res.status(200).json(newMission);
     } catch (error) {
       return res.send(error);
     }
@@ -118,7 +117,7 @@ const missionController = {
           type,
       );
 
-      return Response.success(editedMission).send(res);
+      return res.status(200).json(editedMission);
     } catch (error) {
       return res.send(error);
     }
@@ -129,7 +128,7 @@ const missionController = {
 
       const deletedMission = await missionService.deleteMission(id);
 
-      return Response.success(deletedMission).send(res);
+      return res.status(200).json(deletedMission);
     } catch (error) {
       return res.send(error);
     }
