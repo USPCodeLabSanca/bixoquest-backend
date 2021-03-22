@@ -1,27 +1,12 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const {validationResult} = require('express-validator');
 const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
 const UserModel = require('../models/user');
 
-const Response = require('../lib/response');
 const {sendEmail} = require('../lib/send-email');
-
-/**
- * handleValidationError
- *
- * @param {object} req
- *
- * @return {object}
- */
-function handleValidationError(req) {
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    return createError.BadRequest({errors: validationErrors.array()});
-  }
-}
+const {handleValidationResult} = require('../lib/handle-validation-result');
 
 /**
  * formatUserResponse
@@ -49,7 +34,7 @@ module.exports.loginAdmin = async (req, res, next) => {
     const {key} = req.body;
 
     if (key !== process.env.ADMIN_KEY) {
-      return next(createError.Forbidden('Senha incorreta.'));
+      throw new createError.Forbidden('Senha incorreta.');
     }
 
     const currentUser = await UserModel.findOne({nusp: key});
@@ -57,24 +42,26 @@ module.exports.loginAdmin = async (req, res, next) => {
     const token = jwt.create({id: currentUser._id, isAdmin: true});
     res.setHeader('authorization', token);
 
-    return Response.success({
+    return res.status(200).json({
       success: true,
       message: 'Administrador autenticado com sucesso.',
       user: currentUser,
       token,
-    }).send(res);
+    });
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
 module.exports.signup = async (req, res, next) => {
   try {
-    const validationError = handleValidationError(req, next);
-    if (validationError) {
-      return next(validationError);
-    }
+    handleValidationResult(req);
 
     const {
       email,
@@ -85,7 +72,7 @@ module.exports.signup = async (req, res, next) => {
 
     const foundUser = await UserModel.findOne({email, nusp: null, isAdmin: false});
     if (foundUser) {
-      return next(createError.Unauthorized());
+      throw new createError.Unauthorized();
     }
 
     const createdUser = new UserModel({
@@ -113,16 +100,18 @@ module.exports.signup = async (req, res, next) => {
     return res.status(200).json(formatUserResponse(createdUser));
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
 module.exports.signupUspSecondStep = async (req, res) => {
   try {
-    const validationError = handleValidationError(req, next);
-    if (validationError) {
-      return next(validationError);
-    }
+    handleValidationResult(req);
 
     const {
       course,
@@ -130,7 +119,7 @@ module.exports.signupUspSecondStep = async (req, res) => {
 
     const foundUser = await UserModel.findOne({email: req.user.email, nusp: req.user.nusp});
     if (!foundUser) {
-      return next(createError.Unauthorized());
+      throw new createError.Unauthorized();
     }
 
     foundUser.course = course;
@@ -152,17 +141,19 @@ module.exports.signupUspSecondStep = async (req, res) => {
     return res.status(200).json(formatUserResponse(foundUser, houseWithLessMembers));
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
 module.exports.login = async (req, res, next) => {
-  const validationError = handleValidationError(req, next);
-  if (validationError) {
-    return next(validationError);
-  }
-
   try {
+    handleValidationResult(req);
+
     const {
       email,
       password,
@@ -170,7 +161,7 @@ module.exports.login = async (req, res, next) => {
 
     const foundUser = await UserModel.findOne({email, nusp: null});
     if (!foundUser || !foundUser.password || !bcrypt.compareSync(password, foundUser.password)) {
-      return next(createError.Unauthorized());
+      throw new createError.Unauthorized();
     }
 
     const token = jwt.sign({data: {id: foundUser._id}}, process.env.JWT_PRIVATE_KEY, {
@@ -182,24 +173,26 @@ module.exports.login = async (req, res, next) => {
     return res.status(200).json(formatUserResponse(foundUser));
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
 module.exports.forgotPassword = async (req, res, next) => {
-  const validationError = handleValidationError(req, next);
-  if (validationError) {
-    return next(validationError);
-  }
-
   try {
+    handleValidationResult(req);
+
     const {
       email,
     } = req.body;
 
     const foundUser = await UserModel.findOne({email, nusp: null});
     if (!foundUser || !foundUser.password) {
-      return next(createError.Unauthorized());
+      throw new createError.Unauthorized();
     }
 
     const code = crypto.randomBytes(6).toString('hex');
@@ -217,17 +210,19 @@ module.exports.forgotPassword = async (req, res, next) => {
     return res.status(200).json();
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
 module.exports.resetPassword = async (req, res, next) => {
-  const validationError = handleValidationError(req, next);
-  if (validationError) {
-    return next(validationError);
-  }
-
   try {
+    handleValidationResult(req);
+
     const {
       email,
       code,
@@ -236,7 +231,7 @@ module.exports.resetPassword = async (req, res, next) => {
 
     const foundUser = await UserModel.findOne({email, nusp: null});
     if (!foundUser || !foundUser.password || code !== foundUser.resetPasswordCode) {
-      return next(createError.Unauthorized());
+      throw new createError.Unauthorized();
     }
 
     foundUser.password = password;
@@ -251,7 +246,12 @@ module.exports.resetPassword = async (req, res, next) => {
     return res.status(200).json(formatUserResponse(foundUser));
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
@@ -260,7 +260,12 @@ module.exports.getLoggedUser = async (req, res, next) => {
     return res.status(200).json(formatUserResponse(req.user));
   } catch (error) {
     console.log(error);
-    return next(createError.InternalServerError('Erro no servidor.'));
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
 };
 
@@ -301,31 +306,41 @@ module.exports.authenticateUser = async (data, cb) => {
 };
 
 module.exports.authenticationSuccess = async (req, res, next) => {
-  if (!req.cookies.session) {
-    return next(createError.Forbidden('Cookie não pode ser vazio.'));
-  }
+  try {
+    if (!req.cookies.session) {
+      throw new createError.Forbidden('Cookie não pode ser vazio.');
+    }
 
-  if (!req.user) {
-    return next(createError.Forbidden('Usuário não encontrado.'));
-  }
+    if (!req.user) {
+      throw new createError.Forbidden('Usuário não encontrado.');
+    }
 
-  const token = jwt.sign({data: {id: req.user._id}}, process.env.JWT_PRIVATE_KEY, {
-    expiresIn: '30d',
-  });
+    const token = jwt.sign({data: {id: req.user._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
 
-  if (req.user && req.user.nusp) {
+    if (req.user && req.user.nusp) {
+      return res.status(200).json({
+        success: true,
+        token: `Bearer ${token}`,
+        isSignup: false,
+        ...formatUserResponse(req.user),
+      });
+    }
     return res.status(200).json({
+      isSignup: true,
       success: true,
       token: `Bearer ${token}`,
-      isSignup: false,
-      ...formatUserResponse(req.user),
     });
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
-  return res.status(200).json({
-    isSignup: true,
-    success: true,
-    token: `Bearer ${token}`,
-  });
 };
 
 module.exports.authenticationFailure = async (req, res, next) => next(createError.Forbidden({
