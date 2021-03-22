@@ -126,7 +126,6 @@ module.exports.signupUspSecondStep = async (req, res) => {
 
     const {
       course,
-      permission,
     } = req.body;
 
     const foundUser = await UserModel.findOne({email: req.user.email, nusp: req.user.nusp});
@@ -135,7 +134,6 @@ module.exports.signupUspSecondStep = async (req, res) => {
     }
 
     foundUser.course = course;
-    foundUser.permission = permission;
     await foundUser.save();
 
     await sendEmail(
