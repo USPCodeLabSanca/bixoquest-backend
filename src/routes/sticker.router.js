@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const AuthController = require('../controllers/auth.controller');
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const StickersController = require('../controllers/sticker.controller');
 
 const router = Router();
@@ -8,8 +8,8 @@ const router = Router();
 router.post(
     '/donate',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     StickersController.donate,
 );

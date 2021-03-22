@@ -1,6 +1,7 @@
 const {Router} = require('express');
 const {body} = require('express-validator');
 
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const AuthController = require('../controllers/auth.controller');
 
 const router = Router();
@@ -18,8 +19,8 @@ router.post(
 router.post(
     '/signup-usp-second-step',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     AuthController.signupUspSecondStep,
 );
@@ -54,8 +55,8 @@ router.post(
 router.get(
     '/me',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     AuthController.getLoggedUser,
 );

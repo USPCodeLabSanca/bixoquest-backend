@@ -8,7 +8,7 @@ const missionsRouter = require('./mission.router');
 const stickersRouter = require('./sticker.router');
 const jwt = require('../lib/jwt');
 
-const AuthController = require('../controllers/auth.controller');
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const MissionsController = require('../controllers/mission.controller');
 const StickersController = require('../controllers/sticker.controller');
 
@@ -24,8 +24,8 @@ router.use('/stickers', stickersRouter);
 router.post(
     '/qrcode/scan',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     (req, res) => {
       const {token} = req.body;

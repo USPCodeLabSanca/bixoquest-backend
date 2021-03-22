@@ -1,18 +1,58 @@
 const {Router} = require('express');
 
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const MissionsController = require('../../controllers/mission.controller');
-const {withAuthorization} = require('../../lib/jwt');
 
 const router = Router();
 
-router.get('/', withAuthorization(MissionsController.getMissions, true));
+router.get(
+    '/',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+      AuthMiddleware.isAdmin,
+    ],
+    MissionsController.getMissions,
+);
 
-router.get('/:id', withAuthorization(MissionsController.getMission, true));
+router.get(
+    '/:id',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+      AuthMiddleware.isAdmin,
+    ],
+    MissionsController.getMission,
+);
 
-router.post('/', withAuthorization(MissionsController.createMission, true));
+router.post(
+    '/',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+      AuthMiddleware.isAdmin,
+    ],
+    MissionsController.createMission,
+);
 
-router.put('/:id', withAuthorization(MissionsController.editMission, true));
+router.put(
+    '/:id',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+      AuthMiddleware.isAdmin,
+    ],
+    MissionsController.editMission,
+);
 
-router.delete('/:id', withAuthorization(MissionsController.deleteMission, true));
+router.delete(
+    '/:id',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+      AuthMiddleware.isAdmin,
+    ],
+    MissionsController.deleteMission,
+);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const AuthController = require('../controllers/auth.controller');
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const MissionsController = require('../controllers/mission.controller');
 
 const router = Router();
@@ -8,8 +8,8 @@ const router = Router();
 router.get(
     '/all',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     MissionsController.getAllMissions,
 );
@@ -17,8 +17,8 @@ router.get(
 router.get(
     '/:id',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     MissionsController.getMission,
 );
@@ -26,8 +26,8 @@ router.get(
 router.get(
     '/',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     MissionsController.getNearMissions,
 );
@@ -35,8 +35,8 @@ router.get(
 router.post(
     '/:id/complete',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     MissionsController.completeMission,
 );

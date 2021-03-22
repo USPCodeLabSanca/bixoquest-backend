@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const AuthController = require('../controllers/auth.controller');
+const AuthMiddleware = require('../middlewares/auth.middleware');
 const UserController = require('../controllers/user.controller');
 
 const router = Router();
@@ -8,8 +8,8 @@ const router = Router();
 router.get(
     '/',
     [
-      AuthController.authenticate,
-      AuthController.isAuthenticated,
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
     ],
     UserController.getLoggedUser,
 );
