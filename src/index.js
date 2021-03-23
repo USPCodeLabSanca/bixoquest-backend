@@ -98,10 +98,7 @@ app.use((error, req, res, next) => {
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, env.FRONTEND_PATH, 'index.html')));
 
-let backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
-if (env.NODE_ENV === 'production') {
-  backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
-}
+const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
