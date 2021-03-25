@@ -13,7 +13,7 @@ router.post(
       body('email', 'Invalid field \'email\'').isEmail(),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
     ],
-    AuthController.signup,
+    (req, res, next) => AuthController.signup(req, res, next, false),
 );
 
 router.post(
@@ -31,7 +31,7 @@ router.post(
       body('email', 'Invalid field \'email\'').isEmail(),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
     ],
-    AuthController.login,
+    (req, res, next) => AuthController.login(req, res, next, false),
 );
 
 router.post(

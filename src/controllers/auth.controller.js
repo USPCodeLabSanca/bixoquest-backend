@@ -29,37 +29,15 @@ function formatUserResponse(user) {
   };
 }
 
-module.exports.loginAdmin = async (req, res, next) => {
-  try {
-    const {key} = req.body;
-
-    if (key !== process.env.ADMIN_KEY) {
-      throw new createError.Forbidden('Senha incorreta.');
-    }
-
-    const currentUser = await UserModel.findOne({nusp: key});
-
-    const token = jwt.create({id: currentUser._id, isAdmin: true});
-    res.setHeader('authorization', token);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Administrador autenticado com sucesso.',
-      user: currentUser,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-
-    if (!createError.isHttpError(error)) {
-      error = new createError.InternalServerError('Erro no servidor.');
-    }
-
-    return next(error);
-  }
-};
-
-module.exports.signup = async (req, res, next) => {
+/**
+ * Signup
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @param {boolean} isAdmin
+ */
+async function signup(req, res, next, isAdmin) {
   try {
     handleValidationResult(req);
 
@@ -68,9 +46,14 @@ module.exports.signup = async (req, res, next) => {
       name,
       password,
       course,
+      key,
     } = req.body;
 
-    const foundUser = await UserModel.findOne({email, nusp: null, isAdmin: false});
+    if (isAdmin && key !== process.env.ADMIN_KEY) {
+      throw new createError.Forbidden('Palavra chave incorreta.');
+    }
+
+    const foundUser = await UserModel.findOne({email, nusp: null, isAdmin});
     if (foundUser) {
       throw new createError.Unauthorized();
     }
@@ -81,6 +64,7 @@ module.exports.signup = async (req, res, next) => {
       name,
       password,
       course,
+      isAdmin,
     });
     await createdUser.save();
 
@@ -107,9 +91,16 @@ module.exports.signup = async (req, res, next) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.signupUspSecondStep = async (req, res) => {
+/**
+ * Signup Usp Second Step
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function signupUspSecondStep(req, res, next) {
   try {
     handleValidationResult(req);
 
@@ -148,9 +139,17 @@ module.exports.signupUspSecondStep = async (req, res) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.login = async (req, res, next) => {
+/**
+ * Login
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @param {boolean} isAdmin
+ */
+async function login(req, res, next, isAdmin) {
   try {
     handleValidationResult(req);
 
@@ -159,7 +158,7 @@ module.exports.login = async (req, res, next) => {
       password,
     } = req.body;
 
-    const foundUser = await UserModel.findOne({email, nusp: null});
+    const foundUser = await UserModel.findOne({email, nusp: null, isAdmin});
     if (!foundUser || !foundUser.password || !bcrypt.compareSync(password, foundUser.password)) {
       throw new createError.Unauthorized();
     }
@@ -180,9 +179,16 @@ module.exports.login = async (req, res, next) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.forgotPassword = async (req, res, next) => {
+/**
+ * Forgot Password
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function forgotPassword(req, res, next) {
   try {
     handleValidationResult(req);
 
@@ -217,9 +223,16 @@ module.exports.forgotPassword = async (req, res, next) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.resetPassword = async (req, res, next) => {
+/**
+ * Reset Password
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function resetPassword(req, res, next) {
   try {
     handleValidationResult(req);
 
@@ -253,9 +266,15 @@ module.exports.resetPassword = async (req, res, next) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.authenticateUser = async (data, cb) => {
+/**
+ * Authenticate User
+ *
+ * @param {object} data
+ * @param {function} cb
+ */
+async function authenticateUser(data, cb) {
   const user = JSON.parse(data);
   const currentUser = await UserModel.findOne({
     email: user.emailUspUsuario,
@@ -289,9 +308,16 @@ module.exports.authenticateUser = async (data, cb) => {
   delete newUser.lastTrade;
 
   return cb(null, currentUser);
-};
+}
 
-module.exports.authenticationSuccess = async (req, res, next) => {
+/**
+ * Authentication Success
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function authenticationSuccess(req, res, next) {
   try {
     if (!req.cookies.session) {
       throw new createError.Forbidden('Cookie não pode ser vazio.');
@@ -327,14 +353,43 @@ module.exports.authenticationSuccess = async (req, res, next) => {
 
     return next(error);
   }
-};
+}
 
-module.exports.authenticationFailure = async (req, res, next) => next(createError.Forbidden({
-  success: false,
-  message: 'Falha ao autenticar usuário.',
-}));
+/**
+ * Authentication Failure
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function authenticationFailure(req, res, next) {
+  return next(
+      createError.Forbidden({
+        success: false,
+        message: 'Falha ao autenticar usuário.',
+      }),
+  );
+}
 
-module.exports.logout = async (req, res) => {
+/**
+ * Logout USP User
+ *
+ * @param {object} req
+ * @param {object} res
+ */
+async function logout(req, res) {
   req.logout();
   res.redirect(process.env.FRONTEND_URL);
+}
+
+module.exports = {
+  signup,
+  signupUspSecondStep,
+  login,
+  forgotPassword,
+  resetPassword,
+  authenticateUser,
+  authenticationSuccess,
+  authenticationFailure,
+  logout,
 };
