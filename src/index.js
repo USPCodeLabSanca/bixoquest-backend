@@ -9,13 +9,16 @@ const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
-const Routes = require('./routes');
+const {httpServer} = require('./controllers/game.controller');
 const AuthController = require('./controllers/auth.controller');
+const Routes = require('./routes');
 
 const {env} = process;
 
 const app = express();
 const port = env.PORT || 8080;
+
+const http = httpServer(app);
 
 app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 
@@ -113,7 +116,7 @@ mongoose.connection.on('error', (e) => {
 
 mongoose.connection.on('open', () => {
   console.log('Connected successfuly to MongoDB!');
-  app.listen(port, () => {
+  http.listen(port, () => {
     console.log(`Now listening at port ${port} for requests!`);
   });
 });
