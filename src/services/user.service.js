@@ -17,7 +17,7 @@ const userService = {
   getUserProfile: async (id) => {
     const user = await UserModel
         .findById(id)
-        .select('name course -_id');
+        .select('name course discord -_id');
 
     if (!user) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
