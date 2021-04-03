@@ -37,6 +37,10 @@ const UserSchema = Mongoose.Schema(
         type: String,
         default: 'Não informado',
       },
+      discord: {
+        type: String,
+        default: 'Não informado',
+      },
       completedMissions: {
         type: Array,
       },
