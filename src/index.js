@@ -107,6 +107,7 @@ mongoose.connect(backendUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 mongoose.connection.on('error', (e) => {
