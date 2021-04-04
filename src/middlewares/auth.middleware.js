@@ -10,7 +10,7 @@ module.exports.authenticate = async (req, res, next) => {
       token = token.replace('Bearer ', '');
       const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY).data;
 
-      const user = await UserModel.findById(decoded.id, '-isAdmin -password -createdAt -updatedAt -__v -resetPasswordCode');
+      const user = await UserModel.findById(decoded.id, '-password -createdAt -updatedAt -__v -resetPasswordCode');
 
       req.user = user;
     }
