@@ -46,6 +46,7 @@ const userController = {
         name,
         isAdmin,
         course,
+        character,
         discord,
       } = req.body;
 
@@ -64,6 +65,7 @@ const userController = {
         name,
         isAdmin,
         course,
+        character,
         discord,
       } = req.body;
 
