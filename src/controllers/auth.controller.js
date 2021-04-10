@@ -44,6 +44,7 @@ async function signup(req, res, next, isAdmin) {
     const {
       email,
       name,
+      discord,
       password,
       course,
       key,
@@ -62,6 +63,7 @@ async function signup(req, res, next, isAdmin) {
       email,
       nusp: null,
       name,
+      discord,
       password,
       course,
       isAdmin,
