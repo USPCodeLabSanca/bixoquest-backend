@@ -41,6 +41,7 @@ async function signup(req, res, next) {
     const {
       email,
       password,
+      key,
     } = req.body;
 
     if (key !== process.env.ADMIN_KEY) {
