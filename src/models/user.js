@@ -50,6 +50,7 @@ const UserSchema = Mongoose.Schema(
       },
       friends: {
         type: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        default: [],
       },
       discord: {
         type: String,
@@ -57,15 +58,19 @@ const UserSchema = Mongoose.Schema(
       },
       completedMissions: {
         type: Array,
+        default: [],
       },
       availablePacks: {
         type: Number,
+        default: 0,
       },
       openedPacks: {
         type: Number,
+        default: 0,
       },
       stickers: {
         type: Array,
+        default: [],
       },
       lastTrade: {
         type: String,
