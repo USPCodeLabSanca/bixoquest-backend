@@ -92,11 +92,7 @@ app.get('/api/auth/redirect', passport.authenticate('provider', {
 app.use('/api', Routes);
 
 app.use((error, req, res, next) => {
-  // Sets HTTP status code
-  res.status(error.status);
-
-  // Sends response
-  return res.json({message: error.message});
+  return res.status(error.status).json({message: error.message});
 });
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, env.FRONTEND_PATH, 'index.html')));

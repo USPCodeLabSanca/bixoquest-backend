@@ -15,7 +15,7 @@ router.get(
 );
 
 router.post(
-    '/',
+    '/add-friend',
     [
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,

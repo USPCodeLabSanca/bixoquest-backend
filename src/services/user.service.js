@@ -1,3 +1,4 @@
+const createError = require('http-errors');
 const ObjectId = require('mongodb').ObjectID;
 
 const UserModel = require('../models/user');
@@ -29,12 +30,12 @@ const userService = {
     const user = await UserModel.findById(id);
     const friend = await UserModel.findById(idFriend);
 
-    if (!friend) {
+    if (!friend || friend.isAdmin) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${idFriend}`);
     } else if (friend._id == user._id) {
-      throw new createError('Não pode adicionar o mesmo usuário que requisitou');
-    } else if (user.friends.length > 0 && user.friends.find(item => item === idFriend) != undefined) {
-      throw new createError('Usuário já foi adicionado');
+      throw new createError.BadRequest('Não pode adicionar o mesmo usuário que requisitou');
+    } else if (user.friends && !user.friends.find((friend) => friend === idFriend)) {
+      throw new createError.BadRequest('Usuário já foi adicionado');
     }
 
     user.friends.push(idFriend);

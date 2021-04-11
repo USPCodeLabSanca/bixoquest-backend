@@ -1,6 +1,8 @@
 const Mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const Schema = Mongoose.Schema;
+
 const UserSchema = Mongoose.Schema(
     {
       nusp: {
@@ -60,7 +62,7 @@ const UserSchema = Mongoose.Schema(
         default: 'Não informado',
       },
       friends: {
-        type: Array,
+        type: [{type: Schema.Types.ObjectId, ref: 'User'}],
       },
       discord: {
         type: String,

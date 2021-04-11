@@ -1,3 +1,4 @@
+const createError = require('http-errors');
 const userService = require('../services/user.service');
 
 const userController = {
@@ -19,7 +20,7 @@ const userController = {
       return res.send(error);
     }
   },
-  addFriend: async (req, res) => {
+  addFriend: async (req, res, next) => {
     try {
       const {id} = req.user;
       const {idFriend} = req.body;
@@ -28,7 +29,11 @@ const userController = {
 
       return res.status(200).json(friend);
     } catch (error) {
-      return res.send(error);
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
   getUsers: async (req, res) => {
