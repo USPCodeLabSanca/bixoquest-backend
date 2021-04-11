@@ -23,6 +23,15 @@ router.post(
     UserController.addFriend,
 );
 
+router.get(
+    '/friends',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    UserController.getUserFriends,
+);
+
 router.put(
     '/',
     [

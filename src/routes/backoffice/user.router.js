@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const AuthMiddleware = require('../../middlewares/auth.middleware');
+const AdminAuthMiddleware = require('../../middlewares/admin-auth.middleware');
 const UsersController = require('../../controllers/user.controller');
 
 const router = Router();
@@ -8,9 +8,8 @@ const router = Router();
 router.get(
     '/',
     [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-      AuthMiddleware.isAdmin,
+      AdminAuthMiddleware.authenticate,
+      AdminAuthMiddleware.isAuthenticated,
     ],
     UsersController.getUsers,
 );
@@ -18,9 +17,8 @@ router.get(
 router.get(
     '/:id',
     [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-      AuthMiddleware.isAdmin,
+      AdminAuthMiddleware.authenticate,
+      AdminAuthMiddleware.isAuthenticated,
     ],
     UsersController.getUser,
 );
@@ -28,9 +26,8 @@ router.get(
 router.post(
     '/',
     [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-      AuthMiddleware.isAdmin,
+      AdminAuthMiddleware.authenticate,
+      AdminAuthMiddleware.isAuthenticated,
     ],
     UsersController.createUser,
 );
@@ -38,9 +35,8 @@ router.post(
 router.put(
     '/:id',
     [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-      AuthMiddleware.isAdmin,
+      AdminAuthMiddleware.authenticate,
+      AdminAuthMiddleware.isAuthenticated,
     ],
     UsersController.editUser,
 );
@@ -48,9 +44,8 @@ router.put(
 router.delete(
     '/:id',
     [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-      AuthMiddleware.isAdmin,
+      AdminAuthMiddleware.authenticate,
+      AdminAuthMiddleware.isAuthenticated,
     ],
     UsersController.deleteUser,
 );

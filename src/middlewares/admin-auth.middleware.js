@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
-const UserModel = require('../models/user');
+const AdminUserModel = require('../models/admin-user');
 
 module.exports.authenticate = async (req, res, next) => {
   try {
@@ -10,9 +10,9 @@ module.exports.authenticate = async (req, res, next) => {
       token = token.replace('Bearer ', '');
       const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY).data;
 
-      const user = await UserModel.findById(decoded.id, '-password -createdAt -updatedAt -__v -resetPasswordCode');
+      const adminUser = await AdminUserModel.findById(decoded.id, '-password -createdAt -updatedAt -__v -resetPasswordCode');
 
-      req.user = user;
+      req.adminUser = adminUser;
     }
 
     next();
@@ -24,7 +24,7 @@ module.exports.authenticate = async (req, res, next) => {
 
 module.exports.isAuthenticated = async (req, res, next) => {
   try {
-    if (!req.user) {
+    if (!req.adminUser) {
       return next(createError.Unauthorized());
     }
 

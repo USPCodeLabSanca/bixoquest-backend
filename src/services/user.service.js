@@ -30,7 +30,7 @@ const userService = {
     const user = await UserModel.findById(id);
     const friend = await UserModel.findById(idFriend);
 
-    if (!friend || friend.isAdmin) {
+    if (!friend) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${idFriend}`);
     } else if (friend._id == user._id) {
       throw new createError.BadRequest('Não pode adicionar o mesmo usuário que requisitou');
@@ -42,6 +42,11 @@ const userService = {
     await user.save();
 
     return friend;
+  },
+  getUserFriends: async (id) => {
+    const user = await UserModel.findById(id).populate('friends');
+
+    return user.friends;
   },
   getUsers: async () => {
     const users = await UserModel.find();
@@ -63,7 +68,6 @@ const userService = {
     newUser._id = new ObjectId();
     newUser.nusp = nusp;
     newUser.name = name;
-    newUser.isAdmin = isAdmin;
     newUser.course = course;
     newUser.discord = discord;
     newUser.character = character;
@@ -77,13 +81,12 @@ const userService = {
 
     return newUser;
   },
-  editUser: async (id, nusp, name, isAdmin, course, character, discord) => {
+  editUser: async (id, nusp, name, course, character, discord) => {
     const editedUser = await UserModel.findByIdAndUpdate(
         id,
         {
           nusp,
           name,
-          isAdmin,
           course,
           character,
           discord,

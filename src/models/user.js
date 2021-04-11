@@ -21,20 +21,6 @@ const UserSchema = Mongoose.Schema(
         required: true,
         trim: true,
       },
-      isAdmin: {
-        type: Boolean,
-        default: false,
-      },
-      // 0 - Root Access
-      // 1 - Full Access
-      adminRole: {
-        type: Number,
-      },
-      name: {
-        type: String,
-        required: true,
-        trim: true,
-      },
       character: {
         type: {
           skin: {type: Number},
@@ -56,6 +42,7 @@ const UserSchema = Mongoose.Schema(
           hair: 0,
           mouth: 0,
         },
+        required: true,
       },
       course: {
         type: String,
@@ -98,7 +85,7 @@ const UserSchema = Mongoose.Schema(
     {collection: 'user'},
 );
 
-UserSchema.index({nusp: 1, email: 1, isAdmin: 1}, {unique: true});
+UserSchema.index({nusp: 1, email: 1}, {unique: true});
 
 UserSchema.pre(['save', 'updateOne', 'findOneAndUpdate'], function(next) {
   const user = this;

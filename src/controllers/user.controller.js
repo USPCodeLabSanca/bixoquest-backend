@@ -36,6 +36,21 @@ const userController = {
       return next(error);
     }
   },
+  getUserFriends: async (req, res, next) => {
+    try {
+      const {id} = req.user;
+
+      const friends = await userService.getUserFriends(id);
+
+      return res.status(200).json(friends);
+    } catch (error) {
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
+    }
+  },
   getUsers: async (req, res) => {
     try {
       const users = await userService.getUsers();
@@ -61,13 +76,12 @@ const userController = {
       const {
         nusp,
         name,
-        isAdmin,
         course,
         character,
         discord,
       } = req.body;
 
-      const newUser = await userService.createUser(nusp, name, isAdmin, course, character, discord);
+      const newUser = await userService.createUser(nusp, name, course, character, discord);
 
       return res.status(200).json(newUser);
     } catch (error) {
@@ -80,13 +94,12 @@ const userController = {
       const {
         nusp,
         name,
-        isAdmin,
         course,
         character,
         discord,
       } = req.body;
 
-      const editedUser = await userService.editUser(id, nusp, name, isAdmin, course, character, discord);
+      const editedUser = await userService.editUser(id, nusp, name, course, character, discord);
 
       return res.status(200).json(editedUser);
     } catch (error) {
@@ -95,13 +108,13 @@ const userController = {
   },
   updateUserProfile: async (req, res) => {
     try {
-      const {_id, nusp, name, isAdmin, course} = req.user;
+      const {_id, nusp, name, course} = req.user;
       const {
         character,
         discord,
       } = req.body;
 
-      const editedUser = await userService.editUser(_id, nusp, name, isAdmin, course, character, discord);
+      const editedUser = await userService.editUser(_id, nusp, name, course, character, discord);
 
       return res.status(200).json(editedUser);
     } catch (error) {

@@ -37,9 +37,8 @@ function formatUserResponse(user) {
  * @param {object} req
  * @param {object} res
  * @param {function} next
- * @param {boolean} isAdmin
  */
-async function signup(req, res, next, isAdmin) {
+async function signup(req, res, next) {
   try {
     handleValidationResult(req);
 
@@ -50,14 +49,9 @@ async function signup(req, res, next, isAdmin) {
       character,
       password,
       course,
-      key,
     } = req.body;
 
-    if (isAdmin && key !== process.env.ADMIN_KEY) {
-      throw new createError.Forbidden('Palavra chave incorreta.');
-    }
-
-    const foundUser = await UserModel.findOne({email, nusp: null, isAdmin});
+    const foundUser = await UserModel.findOne({email, nusp: null});
     if (foundUser) {
       throw new createError.Unauthorized();
     }
@@ -70,7 +64,6 @@ async function signup(req, res, next, isAdmin) {
       character,
       password,
       course,
-      isAdmin,
     });
     await createdUser.save();
 
@@ -153,9 +146,8 @@ async function signupUspSecondStep(req, res, next) {
  * @param {object} req
  * @param {object} res
  * @param {function} next
- * @param {boolean} isAdmin
  */
-async function login(req, res, next, isAdmin) {
+async function login(req, res, next) {
   try {
     handleValidationResult(req);
 
@@ -164,7 +156,7 @@ async function login(req, res, next, isAdmin) {
       password,
     } = req.body;
 
-    const foundUser = await UserModel.findOne({email, nusp: null, isAdmin});
+    const foundUser = await UserModel.findOne({email, nusp: null});
     if (!foundUser || !foundUser.password || !bcrypt.compareSync(password, foundUser.password)) {
       throw new createError.Unauthorized();
     }
@@ -302,7 +294,6 @@ async function authenticateUser(data, cb) {
     });
     await newUser.save();
 
-    delete newUser.isAdmin;
     delete newUser.lastTrade;
 
     if (newUser) {
