@@ -41,7 +41,9 @@ async function move(socket, token, lat, lng) {
 module.exports.httpServer = (app) => {
   const http = require('http').Server(app);
   const io = require('socket.io')(http, {
-    path: '/socket.io',
+    cors: {
+      origin: '*',
+    },
   });
 
   io.on('connection', (socket) => {
