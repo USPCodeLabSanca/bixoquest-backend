@@ -25,6 +25,23 @@ const userService = {
 
     return user;
   },
+  addFriend: async (id, idFriend) => {
+    const user = await UserModel.findById(id);
+    const friend = await UserModel.findById(idFriend);
+
+    if (!friend) {
+      throw new createError.NotFound(`Não foi encontrado usuário com o id ${idFriend}`);
+    } else if (friend._id == user._id) {
+      throw new createError('Não pode adicionar o mesmo usuário que requisitou');
+    } else if (user.friends.length > 0 && user.friends.find(item => item === idFriend) != undefined) {
+      throw new createError('Usuário já foi adicionado');
+    }
+
+    user.friends.push(idFriend);
+    await user.save();
+
+    return friend;
+  },
   getUsers: async () => {
     const users = await UserModel.find();
 

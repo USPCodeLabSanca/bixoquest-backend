@@ -14,6 +14,15 @@ router.get(
     UserController.getLoggedUser,
 );
 
+router.post(
+  '/',
+  [
+    AuthMiddleware.authenticate,
+    AuthMiddleware.isAuthenticated,
+  ],
+  UserController.addFriend,
+);
+
 router.get(
     '/:id',
     [

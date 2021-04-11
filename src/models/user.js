@@ -37,6 +37,9 @@ const UserSchema = Mongoose.Schema(
         type: String,
         default: 'Não informado',
       },
+      friends:{
+        type: Array,
+      },
       completedMissions: {
         type: Array,
       },

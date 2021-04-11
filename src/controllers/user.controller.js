@@ -19,6 +19,18 @@ const userController = {
       return res.send(error);
     }
   },
+  addFriend: async (req, res) => {
+    try {
+      const {id} = req.user;
+      const {idFriend} = req.body;
+
+      const friend = await userService.addFriend(id, idFriend);
+
+      return res.status(200).json(friend);
+    } catch (error) {
+      return res.send(error);
+    }
+  },
   getUsers: async (req, res) => {
     try {
       const users = await userService.getUsers();
