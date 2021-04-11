@@ -1,17 +1,22 @@
 const createError = require('http-errors');
 
 const userService = require('../services/user.service');
-const {formatUser} = require('../lib/format-user');
 
 const userController = {
-  getLoggedUser: async (req, res) => {
+  getLoggedUser: async (req, res, next) => {
     try {
       return res.status(200).json(req.user);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getUserProfile: async (req, res) => {
+  getUserProfile: async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -19,19 +24,31 @@ const userController = {
 
       return res.status(200).json(user);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getUsers: async (req, res) => {
+  getUsers: async (req, res, next) => {
     try {
       const users = await userService.getUsers();
 
       return res.status(200).json(users);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getUser: async (req, res) => {
+  getUser: async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -39,10 +56,16 @@ const userController = {
 
       return res.status(200).json(user);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  createUser: async (req, res) => {
+  createUser: async (req, res, next) => {
     try {
       const {
         nusp,
@@ -56,10 +79,16 @@ const userController = {
 
       return res.status(200).json(newUser);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  editUser: async (req, res) => {
+  editUser: async (req, res, next) => {
     try {
       const {id} = req.params;
       const {
@@ -74,10 +103,16 @@ const userController = {
 
       return res.status(200).json(editedUser);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  updateUserProfile: async (req, res) => {
+  updateUserProfile: async (req, res, next) => {
     try {
       const {_id, nusp, name, course} = req.user;
       const {
@@ -89,10 +124,16 @@ const userController = {
 
       return res.status(200).json(editedUser);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  deleteUser: async (req, res) => {
+  deleteUser: async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -100,7 +141,13 @@ const userController = {
 
       return res.status(200).json(deletedUser);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
 };

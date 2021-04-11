@@ -4,12 +4,7 @@ const UserModel = require('../models/user');
 const jwt = require('../lib/jwt');
 
 const stickerService = {
-  donate: async (userId, stickers) => {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new createError.NotFound('Usuário não encontrado');
-    }
-
+  donate: async (user, stickers) => {
     if (stickers.some((sticker) => user.stickers.indexOf(sticker) === -1)) {
       throw new createError.BadRequest('Você não possui essas figurinhas');
     }
@@ -21,13 +16,8 @@ const stickerService = {
 
     return token;
   },
-  receive: async (userId, token) => {
+  receive: async (receiver, token) => {
     const decodedToken = jwt.decode(token);
-
-    const receiver = await UserModel.findById(userId);
-    if (!receiver) {
-      throw new createError.NotFound('Receptor não encontrado');
-    }
 
     const donator = await UserModel.findById(decodedToken.userId);
     if (!donator) {

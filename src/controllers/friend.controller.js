@@ -6,10 +6,10 @@ const {formatUser} = require('../lib/format-user');
 const userController = {
   addFriend: async (req, res, next) => {
     try {
-      const {id} = req.user;
+      const user = req.user;
       const {idFriend} = req.body;
 
-      const friend = await userService.addFriend(id, idFriend);
+      const friend = await userService.addFriend(user, idFriend);
 
       return res.status(200).json(formatUser(friend, [
         'name',

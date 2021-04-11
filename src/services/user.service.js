@@ -24,8 +24,7 @@ const userService = {
 
     return user;
   },
-  addFriend: async (id, idFriend) => {
-    const user = await UserModel.findById(id);
+  addFriend: async (user, idFriend) => {
     const friend = await UserModel.findById(idFriend);
 
     if (!friend) {

@@ -3,7 +3,6 @@ const ObjectId = require('mongodb').ObjectID;
 const createError = require('http-errors');
 
 const MissionModel = require('../models/mission');
-const UserModel = require('../models/user');
 const jwt = require('../lib/jwt');
 
 const missionService = {
@@ -53,12 +52,7 @@ const missionService = {
 
     return nearMissions;
   },
-  completeMission: async (lat, lng, key, id, userId) => {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new createError.NotFound('Usuário não encontrado.');
-    }
-
+  completeMission: async (lat, lng, key, id, user) => {
     const mission = await MissionModel.findById({_id: id});
 
     if (!['location', 'qrcode', 'key'].includes(mission.type)) {

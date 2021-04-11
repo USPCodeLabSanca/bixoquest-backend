@@ -5,9 +5,9 @@ const packService = require('../services/pack.service');
 const packController = {
   openPack: async (req, res, next) => {
     try {
-      const {_id: userId} = req.user;
+      const user = req.user;
 
-      const stickerId = await packService.openPack(userId);
+      const stickerId = await packService.openPack(user);
 
       return res.status(200).json({stickerId: stickerId});
     } catch (error) {

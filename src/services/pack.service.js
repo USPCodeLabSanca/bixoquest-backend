@@ -1,16 +1,9 @@
-const UserModel = require('../models/user');
 const createError = require('http-errors');
 
 const NUMBER_OF_STICKERS = 36;
 
 const packService = {
-  openPack: async (userId) => {
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
-      throw new createError.NotFound('Usuário não encontrado');
-    }
-
+  openPack: async (user) => {
     if (user.availablePacks < 1) {
       throw new createError.BadRequest('Sem pacotes disponíveis');
     }
