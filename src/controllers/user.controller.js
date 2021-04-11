@@ -1,5 +1,7 @@
 const createError = require('http-errors');
+
 const userService = require('../services/user.service');
+const {formatUser} = require('../lib/format-user');
 
 const userController = {
   getLoggedUser: async (req, res) => {
@@ -27,8 +29,15 @@ const userController = {
 
       const friend = await userService.addFriend(id, idFriend);
 
-      return res.status(200).json(friend);
+      return res.status(200).json(formatUser(friend, [
+        'name',
+        'discord',
+        'course',
+        'character',
+      ]));
     } catch (error) {
+      console.log(error);
+
       if (!createError.isHttpError(error)) {
         error = new createError.InternalServerError('Erro no servidor.');
       }
@@ -42,8 +51,20 @@ const userController = {
 
       const friends = await userService.getUserFriends(id);
 
-      return res.status(200).json(friends);
+      const formatedFriends = [];
+      for (const friend of friends) {
+        formatedFriends.push(formatUser(friend, [
+          'name',
+          'discord',
+          'course',
+          'character',
+        ]));
+      }
+
+      return res.status(200).json(formatedFriends);
     } catch (error) {
+      console.log(error);
+
       if (!createError.isHttpError(error)) {
         error = new createError.InternalServerError('Erro no servidor.');
       }

@@ -49,7 +49,7 @@ const UserSchema = Mongoose.Schema(
         default: 'Não informado',
       },
       friends: {
-        type: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        type: [{type: Schema.Types.ObjectId, ref: 'user'}],
         default: [],
       },
       discord: {
