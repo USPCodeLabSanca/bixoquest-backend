@@ -3,6 +3,7 @@ const {Router} = require('express');
 const authRouter = require('./auth.router');
 const backofficeRouter = require('./backoffice/index');
 const usersRouter = require('./user.router');
+const friendsRouter = require('./friend.router');
 const packsRouter = require('./pack.router');
 const missionsRouter = require('./mission.router');
 const stickersRouter = require('./sticker.router');
@@ -16,7 +17,8 @@ const router = Router();
 
 router.use('/backoffice', backofficeRouter);
 router.use('/auth', authRouter);
-router.use('/user', usersRouter);
+router.use('/users', usersRouter);
+router.use('/friends', friendsRouter);
 router.use('/packs', packsRouter);
 router.use('/missions', missionsRouter);
 router.use('/stickers', stickersRouter);
