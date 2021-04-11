@@ -33,12 +33,38 @@ const UserSchema = Mongoose.Schema(
         required: true,
         trim: true,
       },
+      character: {
+        type: {
+          skin: {type: Number},
+          cheek: {type: Number},
+          clothBottom: {type: Number},
+          clothTop: {type: Number},
+          eyes: {type: Number},
+          feet: {type: Number},
+          hair: {type: Number},
+          mouth: {type: Number},
+        },
+        default: {
+          skin: 0,
+          cheek: 0,
+          clothBottom: 0,
+          clothTop: 0,
+          eyes: 0,
+          feet: 0,
+          hair: 0,
+          mouth: 0,
+        },
+      },
       course: {
         type: String,
         default: 'Não informado',
       },
-      friends:{
+      friends: {
         type: Array,
+      },
+      discord: {
+        type: String,
+        default: 'Não informado',
       },
       completedMissions: {
         type: Array,

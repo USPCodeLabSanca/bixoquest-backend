@@ -24,7 +24,9 @@ function formatUserResponse(user) {
       nusp: user.nusp,
       name: user.name,
       id: user._id,
+      discord: user.discord,
       course: user.course,
+      character: user.character,
     },
   };
 }
@@ -44,6 +46,8 @@ async function signup(req, res, next, isAdmin) {
     const {
       email,
       name,
+      discord,
+      character,
       password,
       course,
       key,
@@ -62,6 +66,8 @@ async function signup(req, res, next, isAdmin) {
       email,
       nusp: null,
       name,
+      discord,
+      character,
       password,
       course,
       isAdmin,

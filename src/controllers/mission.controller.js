@@ -103,7 +103,7 @@ const missionController = {
         type,
       } = req.body;
 
-      const editedMission = await missionService.editedMission(
+      const editedMission = await missionService.editMission(
           id,
           title,
           locationReference,

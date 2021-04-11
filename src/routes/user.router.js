@@ -15,12 +15,21 @@ router.get(
 );
 
 router.post(
-  '/',
-  [
-    AuthMiddleware.authenticate,
-    AuthMiddleware.isAuthenticated,
-  ],
-  UserController.addFriend,
+    '/',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    UserController.addFriend,
+);
+
+router.put(
+    '/',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    UserController.updateUserProfile,
 );
 
 router.get(

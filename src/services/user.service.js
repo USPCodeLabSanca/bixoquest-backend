@@ -6,7 +6,7 @@ const userService = {
   getUserBasicData: async (id) => {
     const user = await UserModel
         .findById(id)
-        .select('nusp name course completedMissions availablePacks openedPacks stickers -_id');
+        .select('nusp name course character discord completedMissions availablePacks openedPacks stickers -_id');
 
     if (!user) {
       throw new createError.NotFound('Usuário não encontrado');
@@ -17,7 +17,7 @@ const userService = {
   getUserProfile: async (id) => {
     const user = await UserModel
         .findById(id)
-        .select('name course -_id');
+        .select('name course character discord -_id');
 
     if (!user) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
@@ -56,7 +56,7 @@ const userService = {
 
     return user;
   },
-  createUser: async (nusp, name, isAdmin, course) => {
+  createUser: async (nusp, name, isAdmin, course, character, discord) => {
     const newUser = new UserModel();
 
     newUser._id = new ObjectId();
@@ -64,6 +64,8 @@ const userService = {
     newUser.name = name;
     newUser.isAdmin = isAdmin;
     newUser.course = course;
+    newUser.discord = discord;
+    newUser.character = character;
     newUser.completedMissions = [];
     newUser.availablePacks = 0;
     newUser.openedPacks = 0;
@@ -74,7 +76,7 @@ const userService = {
 
     return newUser;
   },
-  editUser: async (id, nusp, name, isAdmin, course) => {
+  editUser: async (id, nusp, name, isAdmin, course, character, discord) => {
     const editedUser = await UserModel.findByIdAndUpdate(
         id,
         {
@@ -82,6 +84,8 @@ const userService = {
           name,
           isAdmin,
           course,
+          character,
+          discord,
         },
         {new: true},
     );
