@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+
 const UserModel = require('../models/user');
 const jwt = require('../lib/jwt');
 
