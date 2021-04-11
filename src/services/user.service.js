@@ -6,8 +6,7 @@ const UserModel = require('../models/user');
 const userService = {
   getUserBasicData: async (id) => {
     const user = await UserModel
-        .findById(id)
-        .select('nusp name course character discord completedMissions availablePacks openedPacks stickers -_id');
+        .findById(id);
 
     if (!user) {
       throw new createError.NotFound('Usuário não encontrado');
@@ -17,8 +16,7 @@ const userService = {
   },
   getUserProfile: async (id) => {
     const user = await UserModel
-        .findById(id)
-        .select('name course character discord -_id');
+        .findById(id);
 
     if (!user) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);

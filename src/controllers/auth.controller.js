@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const UserModel = require('../models/user');
 
 const {sendEmail} = require('../lib/send-email');
+const {formatUser} = require('../lib/format-user');
 const {handleValidationResult} = require('../lib/handle-validation-result');
 
 /**
@@ -19,15 +20,7 @@ function formatUserResponse(user) {
   return {
     success: true,
     message: 'Usuário autenticado com sucesso.',
-    user: {
-      email: user.email,
-      nusp: user.nusp,
-      name: user.name,
-      id: user._id,
-      discord: user.discord,
-      course: user.course,
-      character: user.character,
-    },
+    user: formatUser(user, ['email', 'nusp', 'name', 'disord', 'course', 'character']),
   };
 }
 
