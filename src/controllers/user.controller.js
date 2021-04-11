@@ -22,56 +22,6 @@ const userController = {
       return res.send(error);
     }
   },
-  addFriend: async (req, res, next) => {
-    try {
-      const {id} = req.user;
-      const {idFriend} = req.body;
-
-      const friend = await userService.addFriend(id, idFriend);
-
-      return res.status(200).json(formatUser(friend, [
-        'name',
-        'discord',
-        'course',
-        'character',
-      ]));
-    } catch (error) {
-      console.log(error);
-
-      if (!createError.isHttpError(error)) {
-        error = new createError.InternalServerError('Erro no servidor.');
-      }
-
-      return next(error);
-    }
-  },
-  getUserFriends: async (req, res, next) => {
-    try {
-      const {id} = req.user;
-
-      const friends = await userService.getUserFriends(id);
-
-      const formatedFriends = [];
-      for (const friend of friends) {
-        formatedFriends.push(formatUser(friend, [
-          'name',
-          'discord',
-          'course',
-          'character',
-        ]));
-      }
-
-      return res.status(200).json(formatedFriends);
-    } catch (error) {
-      console.log(error);
-
-      if (!createError.isHttpError(error)) {
-        error = new createError.InternalServerError('Erro no servidor.');
-      }
-
-      return next(error);
-    }
-  },
   getUsers: async (req, res) => {
     try {
       const users = await userService.getUsers();
