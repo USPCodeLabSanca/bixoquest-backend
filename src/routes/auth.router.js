@@ -10,6 +10,7 @@ router.post(
     '/signup',
     [
       body('name', 'Invalid field \'name\'').not().isEmpty(),
+      body('discord', 'Invalid field \'discord\'').not().isEmpty(),
       body('email', 'Invalid field \'email\'').isEmail(),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
     ],

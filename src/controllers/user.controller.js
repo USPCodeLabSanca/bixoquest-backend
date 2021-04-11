@@ -46,9 +46,11 @@ const userController = {
         name,
         isAdmin,
         course,
+        character,
+        discord,
       } = req.body;
 
-      const newUser = await userService.createUser(nusp, name, isAdmin, course);
+      const newUser = await userService.createUser(nusp, name, isAdmin, course, discord);
 
       return res.status(200).json(newUser);
     } catch (error) {
@@ -63,9 +65,11 @@ const userController = {
         name,
         isAdmin,
         course,
+        character,
+        discord,
       } = req.body;
 
-      const editedUser = await userService.editUser(id, nusp, name, isAdmin, course);
+      const editedUser = await userService.editUser(id, nusp, name, isAdmin, course, discord);
 
       return res.status(200).json(editedUser);
     } catch (error) {
