@@ -1,6 +1,8 @@
 const Mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const Schema = Mongoose.Schema;
+
 const UserSchema = Mongoose.Schema(
     {
       nusp: {
@@ -35,14 +37,14 @@ const UserSchema = Mongoose.Schema(
       },
       character: {
         type: {
-          skin: { type: Number },
-          cheek: { type: Number },
-          clothBottom: { type: Number },
-          clothTop: { type: Number },
-          eyes: { type: Number },
-          feet: { type: Number },
-          hair: { type: Number },
-          mouth: { type: Number },
+          skin: {type: Number},
+          cheek: {type: Number},
+          clothBottom: {type: Number},
+          clothTop: {type: Number},
+          eyes: {type: Number},
+          feet: {type: Number},
+          hair: {type: Number},
+          mouth: {type: Number},
         },
         default: {
           skin: 0,
@@ -53,11 +55,14 @@ const UserSchema = Mongoose.Schema(
           feet: 0,
           hair: 0,
           mouth: 0,
-        }
+        },
       },
       course: {
         type: String,
         default: 'Não informado',
+      },
+      friends: {
+        type: [{type: Schema.Types.ObjectId, ref: 'User'}],
       },
       discord: {
         type: String,

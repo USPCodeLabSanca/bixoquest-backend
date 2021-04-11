@@ -14,6 +14,15 @@ router.get(
     UserController.getLoggedUser,
 );
 
+router.post(
+    '/add-friend',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    UserController.addFriend,
+);
+
 router.put(
     '/',
     [
