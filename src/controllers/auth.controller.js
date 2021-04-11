@@ -1,89 +1,385 @@
-const ObjectId = require('mongodb').ObjectID;
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const createError = require('http-errors');
+const jwt = require('jsonwebtoken');
 
 const UserModel = require('../models/user');
-const jwt = require('../lib/jwt');
-const Response = require('../lib/response');
 
-module.exports.loginAdmin = async (req, res) => {
-  const {key} = req.body;
+const {sendEmail} = require('../lib/send-email');
+const {formatUser} = require('../lib/format-user');
+const {handleValidationResult} = require('../lib/handle-validation-result');
 
-  if (key !== process.env.ADMIN_KEY) {
-    return Response.failure('Senha incorreta.', 403).send(res);
-  }
-
-  const currentUser = await UserModel.findOne({nusp: key});
-
-  const token = jwt.create({id: currentUser._id, isAdmin: true});
-  res.setHeader('authorization', token);
-
-  return Response.success({
+/**
+ * formatUserResponse
+ *
+ * @param {object} user
+ *
+ * @return {object}
+ */
+function formatUserResponse(user) {
+  return {
     success: true,
-    message: 'Administrador autenticado com sucesso.',
-    user: currentUser,
-    token,
-  }).send(res);
-};
+    message: 'Usuário autenticado com sucesso.',
+    user: formatUser(user, ['email', 'nusp', 'name', 'disord', 'course', 'character']),
+  };
+}
 
-module.exports.authenticateUser = async (data, cb) => {
+/**
+ * Signup
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function signup(req, res, next) {
+  try {
+    handleValidationResult(req);
+
+    const {
+      email,
+      name,
+      discord,
+      character,
+      password,
+      course,
+    } = req.body;
+
+    const foundUser = await UserModel.findOne({email, nusp: null});
+    if (foundUser) {
+      throw new createError.Unauthorized();
+    }
+
+    const createdUser = new UserModel({
+      email,
+      nusp: null,
+      name,
+      discord,
+      character,
+      password,
+      course,
+    });
+    await createdUser.save();
+
+    await sendEmail(
+        createdUser.email,
+        'Bem vindo ao BixoQuest 2021!',
+        `Você se cadastrou no nosso app e já está tudo certo!!!`,
+        `<div><h1>Voc&ecirc;&nbsp;se&nbsp;cadastrou&nbsp;no&nbsp;nosso&nbsp;app&nbsp;e&nbsp;j&aacute;&nbsp;est&aacute;&nbsp;tudo&nbsp;certo!!!</h1></div>`,
+    );
+
+    const token = jwt.sign({data: {id: createdUser._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
+
+    res.setHeader('Authorization', `Bearer ${token}`);
+
+    return res.status(200).json(formatUserResponse(createdUser));
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
+  }
+}
+
+/**
+ * Signup Usp Second Step
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function signupUspSecondStep(req, res, next) {
+  try {
+    handleValidationResult(req);
+
+    const {
+      course,
+    } = req.body;
+
+    const foundUser = await UserModel.findOne({email: req.user.email, nusp: req.user.nusp});
+    if (!foundUser) {
+      throw new createError.Unauthorized();
+    }
+
+    foundUser.course = course;
+    await foundUser.save();
+
+    await sendEmail(
+        foundUser.email,
+        'Bem vindo ao BixoQuest 2021!',
+        `Você se cadastrou no nosso app e já está tudo certo!!!`,
+        `<div><h1>Voc&ecirc;&nbsp;se&nbsp;cadastrou&nbsp;no&nbsp;nosso&nbsp;app&nbsp;e&nbsp;j&aacute;&nbsp;est&aacute;&nbsp;tudo&nbsp;certo!!!</h1></div>`,
+    );
+
+    const token = jwt.sign({data: {id: foundUser._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
+
+    res.setHeader('Authorization', `Bearer ${token}`);
+
+    return res.status(200).json(formatUserResponse(foundUser, houseWithLessMembers));
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
+  }
+}
+
+/**
+ * Login
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function login(req, res, next) {
+  try {
+    handleValidationResult(req);
+
+    const {
+      email,
+      password,
+    } = req.body;
+
+    const foundUser = await UserModel.findOne({email, nusp: null});
+    if (!foundUser || !foundUser.password || !bcrypt.compareSync(password, foundUser.password)) {
+      throw new createError.Unauthorized();
+    }
+
+    const token = jwt.sign({data: {id: foundUser._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
+
+    res.setHeader('Authorization', `Bearer ${token}`);
+
+    return res.status(200).json(formatUserResponse(foundUser));
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
+  }
+}
+
+/**
+ * Forgot Password
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function forgotPassword(req, res, next) {
+  try {
+    handleValidationResult(req);
+
+    const {
+      email,
+    } = req.body;
+
+    const foundUser = await UserModel.findOne({email, nusp: null});
+    if (!foundUser || !foundUser.password) {
+      throw new createError.Unauthorized();
+    }
+
+    const code = crypto.randomBytes(6).toString('hex');
+
+    foundUser.resetPasswordCode = code;
+    await foundUser.save();
+
+    await sendEmail(
+        foundUser.email,
+        'Recuperação de Senha',
+        `Seu código para recuperação de senha: ${foundUser.resetPasswordCode}`,
+        `<div><h1>Seu&nbsp;c&oacute;digo&nbsp;para&nbsp;recupera&ccedil;&atilde;o&nbsp;de&nbsp;senha:&nbsp;${foundUser.resetPasswordCode}</h1></div>`,
+    );
+
+    return res.status(200).json();
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
+  }
+}
+
+/**
+ * Reset Password
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function resetPassword(req, res, next) {
+  try {
+    handleValidationResult(req);
+
+    const {
+      email,
+      code,
+      password,
+    } = req.body;
+
+    const foundUser = await UserModel.findOne({email, nusp: null});
+    if (!foundUser || !foundUser.password || code !== foundUser.resetPasswordCode) {
+      throw new createError.Unauthorized();
+    }
+
+    foundUser.password = password;
+    await foundUser.save();
+
+    const token = jwt.sign({data: {id: foundUser._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
+
+    res.setHeader('Authorization', `Bearer ${token}`);
+
+    return res.status(200).json(formatUserResponse(foundUser));
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
+  }
+}
+
+/**
+ * Authenticate User
+ *
+ * @param {object} data
+ * @param {function} cb
+ */
+async function authenticateUser(data, cb) {
   const user = JSON.parse(data);
-  const currentUser = await UserModel.findOne({nusp: user.loginUsuario});
+  const currentUser = await UserModel.findOne({
+    email: user.emailUspUsuario,
+    nusp: user.loginUsuario,
+  });
 
   if (!currentUser) {
-    const newUser = new UserModel();
-
-    newUser._id = new ObjectId();
-    newUser.nusp = user.loginUsuario;
-    newUser.name = user.nomeUsuario;
-    newUser.isAdmin = false;
-    newUser.course = user.vinculo && user.vinculo[0] && user.vinculo[0].siglaUnidade;
-    newUser.completed_missions = [];
-    newUser.available_packs = 0;
-    newUser.opened_packs = 0;
-    newUser.stickers = [];
-    newUser.lastTrade = null;
-
+    const newUser = new UserModel({
+      nusp: user.loginUsuario,
+      email: user.emailUspUsuario,
+      name: user.nomeUsuario,
+      isAdmin: false,
+      course: user.vinculo && user.vinculo[0] && user.vinculo[0].siglaUnidade,
+      completedMissions: [],
+      availablePacks: 0,
+      openedPacks: 0,
+      stickers: [],
+      lastTrade: null,
+    });
     await newUser.save();
 
-    delete newUser.isAdmin;
     delete newUser.lastTrade;
 
     if (newUser) {
-      cb(null, newUser);
+      return cb(null, newUser);
     }
   }
 
-  delete currentUser.isAdmin;
-  delete currentUser.lastTrade;
+  delete newUser.isAdmin;
+  delete newUser.lastTrade;
 
-  cb(null, currentUser);
-};
+  return cb(null, currentUser);
+}
 
-module.exports.authenticationSuccess = async (req, res) => {
-  if (!req.cookies.session) {
-    return Response.failure('Cookie não pode ser vazio.', 403).send(res);
+/**
+ * Authentication Success
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function authenticationSuccess(req, res, next) {
+  try {
+    if (!req.cookies.session) {
+      throw new createError.Forbidden('Cookie não pode ser vazio.');
+    }
+
+    if (!req.user) {
+      throw new createError.Forbidden('Usuário não encontrado.');
+    }
+
+    const token = jwt.sign({data: {id: req.user._id}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
+
+    if (req.user && req.user.nusp) {
+      return res.status(200).json({
+        success: true,
+        token: `Bearer ${token}`,
+        isSignup: false,
+        ...formatUserResponse(req.user),
+      });
+    }
+    return res.status(200).json({
+      isSignup: true,
+      success: true,
+      token: `Bearer ${token}`,
+    });
+  } catch (error) {
+    console.log(error);
+
+    if (!createError.isHttpError(error)) {
+      error = new createError.InternalServerError('Erro no servidor.');
+    }
+
+    return next(error);
   }
+}
 
-  if (!req.user) {
-    return Response.failure('Usuário não encontrado.', 403).send(res);
-  }
+/**
+ * Authentication Failure
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+async function authenticationFailure(req, res, next) {
+  return next(
+      createError.Forbidden({
+        success: false,
+        message: 'Falha ao autenticar usuário.',
+      }),
+  );
+}
 
-  const authorization = jwt.create({id: req.user._id, isAdmin: false});
-
-  return Response.success({
-    success: true,
-    message: 'Usuário autenticado com sucesso.',
-    user: req.user,
-    token: authorization,
-  }).send(res);
-};
-
-module.exports.authenticationFailure = async (req, res) => Response.failure({
-  success: false,
-  message: 'Falha ao autenticar usuário.',
-}, 403).send(res);
-
-
-module.exports.logout = async (req, res) => {
+/**
+ * Logout USP User
+ *
+ * @param {object} req
+ * @param {object} res
+ */
+async function logout(req, res) {
   req.logout();
   res.redirect(process.env.FRONTEND_URL);
+}
+
+module.exports = {
+  signup,
+  signupUspSecondStep,
+  login,
+  forgotPassword,
+  resetPassword,
+  authenticateUser,
+  authenticationSuccess,
+  authenticationFailure,
+  logout,
 };

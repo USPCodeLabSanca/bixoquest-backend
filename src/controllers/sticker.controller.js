@@ -1,5 +1,4 @@
 const stickerService = require('../services/sticker.service');
-const Response = require('../lib/response');
 
 const stickerController = {
   donate: async (req, res) => {
@@ -9,7 +8,7 @@ const stickerController = {
 
       const token = await stickerService.donate(userId, stickers);
 
-      return Response.success(token).send(res);
+      return res.status(200).json(token);
     } catch (error) {
       return res.send(error);
     }
@@ -21,7 +20,7 @@ const stickerController = {
 
       const donatorName = await stickerService.receive(userId, token);
 
-      return Response.success({donatorName: donatorName}).send(res);
+      return res.status(200).json({donatorName: donatorName});
     } catch (error) {
       return res.send(error);
     }

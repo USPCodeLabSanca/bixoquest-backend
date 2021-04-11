@@ -1,5 +1,4 @@
 const JWT = require('jsonwebtoken');
-const Response = require('./response');
 
 /**
  * The token may or may not be prefixed with a 'bearer' string. this function verifies
@@ -53,39 +52,8 @@ function decode(token) {
   return JWT.decode(removeBearerFromToken(token));
 }
 
-/**
- * This H.O.F. (Higher Order Function) verifies if a valid token was given to the
- * request. If no token is give, automatically returns a 401 error response.
- * It yet receives a boolean to  verify if the token is of a normal or an admin user,
- * and if the function can be accessed by a common user.
- *
- * @param {function} handler
- * @param {boolean} onlyAdmin
- *
- * @return {function}
- */
-function withAuthorization(handler, onlyAdmin) {
-  return (req, res, next) => {
-    if (req.auth) {
-      const {isAdmin} = req.auth;
-
-      if (isAdmin) {
-        return handler(req, res, next);
-      }
-
-      if (!onlyAdmin) {
-        return handler(req, res, next);
-      }
-
-      return Response.failure('Não autorizado como administrador.', 401).send(res);
-    }
-    return Response.failure('Não autorizado.', 401).send(res);
-  };
-}
-
 module.exports = {
   create,
   verify,
   decode,
-  withAuthorization,
 };

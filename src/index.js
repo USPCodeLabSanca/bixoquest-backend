@@ -7,17 +7,18 @@ const OAuth1Strategy = require('passport-oauth1');
 const OAuth = require('oauth');
 const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
-
-const Routes = require('./routes');
-const AuthController = require('./controllers/auth.controller');
-const jwt = require('./lib/jwt');
-
-const app = express();
-const port = process.env.PORT || 8080;
-
 require('dotenv').config();
 
+const {httpServer} = require('./controllers/game.controller');
+const AuthController = require('./controllers/auth.controller');
+const Routes = require('./routes');
+
 const {env} = process;
+
+const app = express();
+const port = env.PORT || 8080;
+
+const http = httpServer(app);
 
 app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 
@@ -33,13 +34,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json());
-app.use(
-    cors({
-      origin: [env.FRONTEND_URL, env.BACKOFFICE_URL],
-      exposedHeaders: ['authorization'],
-      credentials: true,
-    }),
-);
+app.use(cors({
+  origin: [env.FRONTEND_URL, env.FRONTEND_LOCAL_URL, env.BACKOFFICE_URL, env.BACKOFFICE_LOCAL_URL],
+  exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
+  credentials: true,
+}));
 
 passport.use('provider', new OAuth1Strategy({
   requestTokenURL: env.OAUTH_REQUEST_TOKEN_URL,
@@ -86,36 +85,25 @@ passport.deserializeUser((user, done) => {
 app.get('/api/auth/', passport.authenticate('provider'));
 
 app.get('/api/auth/redirect', passport.authenticate('provider', {
-  successRedirect: env.FRONTEND_URL,
+  successRedirect: `${env.FRONTEND_URL}/auth-usp`,
   failureRedirect: '/api/auth/failure',
 }));
 
-
-/* This middleware function handles tokens. If a token is passed, it verifies if
-it's valid. If the token is valid, it populates `req.auth` with it's payload, and
-already creates a refresh token to ben sent. */
-app.use((req, res, next) => {
-  const token = req.headers.authorization; // extract token
-  if (!token) return next();
-  const payload = jwt.verify(token); // extract payload
-  if (!payload) return next();
-  req.auth = payload; // populate `req.auth` with the payload
-  res.setHeader('authorization', jwt.create({id: payload.id, isAdmin: payload.isAdmin})); // refresh token
-  return next();
-});
-
 app.use('/api', Routes);
+
+app.use((error, req, res, next) => {
+  return res.status(error.status).json({message: error.message});
+});
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, env.FRONTEND_PATH, 'index.html')));
 
-let backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
-if (env.NODE_ENV === 'production') {
-  backendUrl = `mongodb://${env.MONGO_LOCAL_USER}:${env.MONGO_LOCAL_PASSWORD}@${env.MONGO_LOCAL_URL}/${env.MONGO_LOCAL_DB}`;
-}
+const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 
 mongoose.connect(backendUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 mongoose.connection.on('error', (e) => {
@@ -125,7 +113,7 @@ mongoose.connection.on('error', (e) => {
 
 mongoose.connection.on('open', () => {
   console.log('Connected successfuly to MongoDB!');
-  app.listen(port, () => {
+  http.listen(port, () => {
     console.log(`Now listening at port ${port} for requests!`);
   });
 });

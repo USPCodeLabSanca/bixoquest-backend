@@ -1,3 +1,4 @@
+const createError = require('http-errors');
 const ObjectId = require('mongodb').ObjectID;
 
 const UserModel = require('../models/user');
@@ -5,8 +6,7 @@ const UserModel = require('../models/user');
 const userService = {
   getUserBasicData: async (id) => {
     const user = await UserModel
-        .findById({_id: id})
-        .select('nusp name course completed_missions available_packs opened_packs stickers -_id');
+        .findById(id);
 
     if (!user) {
       throw new createError.NotFound('Usuário não encontrado');
@@ -14,13 +14,9 @@ const userService = {
 
     return user;
   },
-  getUsers: async () => {
-    const users = await UserModel.find();
-
-    return users;
-  },
-  getUsers: async (id) => {
-    const user = await UserModel.findById({_id: id});
+  getUserProfile: async (id) => {
+    const user = await UserModel
+        .findById(id);
 
     if (!user) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
@@ -28,17 +24,54 @@ const userService = {
 
     return user;
   },
-  createUser: async (nusp, name, isAdmin, course) => {
+  addFriend: async (id, idFriend) => {
+    const user = await UserModel.findById(id);
+    const friend = await UserModel.findById(idFriend);
+
+    if (!friend) {
+      throw new createError.NotFound(`Não foi encontrado usuário com o id ${idFriend}`);
+    } else if (friend._id == user._id) {
+      throw new createError.BadRequest('Não pode adicionar o mesmo usuário que requisitou');
+    } else if (user.friends && !user.friends.find((friend) => friend === idFriend)) {
+      throw new createError.BadRequest('Usuário já foi adicionado');
+    }
+
+    user.friends.push(idFriend);
+    await user.save();
+
+    return friend;
+  },
+  getUserFriends: async (id) => {
+    const user = await UserModel.findById(id).populate('friends');
+
+    return user.friends;
+  },
+  getUsers: async () => {
+    const users = await UserModel.find();
+
+    return users;
+  },
+  getUser: async (id) => {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
+    }
+
+    return user;
+  },
+  createUser: async (nusp, name, isAdmin, course, character, discord) => {
     const newUser = new UserModel();
 
     newUser._id = new ObjectId();
     newUser.nusp = nusp;
     newUser.name = name;
-    newUser.isAdmin = isAdmin;
     newUser.course = course;
-    newUser.completed_missions = [];
-    newUser.available_packs = 0;
-    newUser.opened_packs = 0;
+    newUser.discord = discord;
+    newUser.character = character;
+    newUser.completedMissions = [];
+    newUser.availablePacks = 0;
+    newUser.openedPacks = 0;
     newUser.stickers = [];
     newUser.lastTrade = null;
 
@@ -46,14 +79,15 @@ const userService = {
 
     return newUser;
   },
-  editUser: async (id, nusp, name, isAdmin, course) => {
+  editUser: async (id, nusp, name, course, character, discord) => {
     const editedUser = await UserModel.findByIdAndUpdate(
         id,
         {
           nusp,
           name,
-          isAdmin,
           course,
+          character,
+          discord,
         },
         {new: true},
     );
