@@ -71,7 +71,7 @@ const missionController = {
     try {
       const {lat, lng, key} = req.body;
       const {id} = req.params;
-      const {id: userId} = req.auth;
+      const {_id: userId} = req.user;
 
       const mission = await missionService.completeMission(lat, lng, key, id, userId);
 
