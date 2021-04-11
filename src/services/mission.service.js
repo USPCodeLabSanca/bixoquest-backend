@@ -20,6 +20,7 @@ const missionService = {
       missionsWithoutLatLng.push(mission);
       delete missionsWithoutLatLng[index].lat;
       delete missionsWithoutLatLng[index].lng;
+      delete missionsWithoutLatLng[index].key;
     });
 
     return missionsWithoutLatLng;
