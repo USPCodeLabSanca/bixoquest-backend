@@ -50,7 +50,7 @@ const userController = {
         discord,
       } = req.body;
 
-      const newUser = await userService.createUser(nusp, name, isAdmin, course, discord);
+      const newUser = await userService.createUser(nusp, name, isAdmin, course, character, discord);
 
       return res.status(200).json(newUser);
     } catch (error) {
@@ -69,7 +69,22 @@ const userController = {
         discord,
       } = req.body;
 
-      const editedUser = await userService.editUser(id, nusp, name, isAdmin, course, discord);
+      const editedUser = await userService.editUser(id, nusp, name, isAdmin, course, character, discord);
+
+      return res.status(200).json(editedUser);
+    } catch (error) {
+      return res.send(error);
+    }
+  },
+  updateUserProfile: async (req, res) => {
+    try {
+      const {_id, nusp, name, isAdmin, course} = req.user;
+      const {
+        character,
+        discord,
+      } = req.body;
+
+      const editedUser = await userService.editUser(_id, nusp, name, isAdmin, course, character, discord);
 
       return res.status(200).json(editedUser);
     } catch (error) {
