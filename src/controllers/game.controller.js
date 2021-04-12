@@ -67,7 +67,7 @@ async function chatMessage(socket, token, text) {
     const createdMessage = new MessageModel(message);
     createdMessage.save();
 
-    return socket.broadcast.emit('chat-message', {socketId: socket.id, user, ...createdMessage._doc});
+    return socket.broadcast.emit('chat-message', {socketId: socket.id, user, message: createdMessage._doc});
   } catch (e) {
     if (e.message) {
       return socket.emit('error-message', e.message);
