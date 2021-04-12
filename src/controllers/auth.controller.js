@@ -108,14 +108,13 @@ async function signupUspSecondStep(req, res, next) {
 
     const {
       course,
+      discord,
+      character,
     } = req.body;
 
-    const foundUser = await UserModel.findOne({email: req.user.email, nusp: req.user.nusp});
-    if (!foundUser) {
-      throw new createError.Unauthorized();
-    }
-
     foundUser.course = course;
+    foundUser.discord = discord;
+    foundUser.character = character;
     await foundUser.save();
 
     await sendEmail(
@@ -131,7 +130,7 @@ async function signupUspSecondStep(req, res, next) {
 
     res.setHeader('Authorization', `Bearer ${token}`);
 
-    return res.status(200).json(formatUserResponse(foundUser, houseWithLessMembers));
+    return res.status(200).json(formatUserResponse(foundUser));
   } catch (error) {
     console.log(error);
 
@@ -287,27 +286,17 @@ async function authenticateUser(data, cb) {
       nusp: user.loginUsuario,
       email: user.emailUspUsuario,
       name: user.nomeUsuario,
-      isAdmin: false,
       course: null,
-      completedMissions: [],
-      availablePacks: 0,
-      openedPacks: 0,
-      stickers: [],
-      lastTrade: null,
     });
+
     await newUser.save();
 
-    delete newUser.lastTrade;
-
     if (newUser) {
-      return cb(null, newUser);
+      return cb(null, formatUserResponse(newUser));
     }
   }
 
-  delete newUser.isAdmin;
-  delete newUser.lastTrade;
-
-  return cb(null, currentUser);
+  return cb(null, formatUserResponse(currentUser));
 }
 
 /**
@@ -332,9 +321,10 @@ async function authenticationSuccess(req, res, next) {
     });
 
     if (req.user && req.user.nusp && req.user.course) {
+      res.setHeader('Authorization', `Bearer ${token}`);
+
       return res.status(200).json({
         success: true,
-        token: `Bearer ${token}`,
         isSignup: false,
         ...formatUserResponse(req.user),
       });
