@@ -292,11 +292,11 @@ async function authenticateUser(data, cb) {
     await newUser.save();
 
     if (newUser) {
-      return cb(null, formatUserResponse(newUser));
+      return cb(null, newUser);
     }
   }
 
-  return cb(null, formatUserResponse(currentUser));
+  return cb(null, currentUser);
 }
 
 /**
