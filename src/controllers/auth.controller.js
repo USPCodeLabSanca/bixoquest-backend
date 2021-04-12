@@ -21,6 +21,7 @@ function formatUserResponse(user) {
     success: true,
     message: 'Usuário autenticado com sucesso.',
     user: formatUser(user, [
+      '_id',
       'email',
       'nusp',
       'name',
@@ -277,7 +278,6 @@ async function resetPassword(req, res, next) {
 async function authenticateUser(data, cb) {
   const user = JSON.parse(data);
   const currentUser = await UserModel.findOne({
-    email: user.emailUspUsuario,
     nusp: user.loginUsuario,
   });
 
