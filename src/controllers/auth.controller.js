@@ -332,9 +332,10 @@ async function authenticationSuccess(req, res, next) {
     });
 
     if (req.user && req.user.nusp && req.user.course) {
+      res.setHeader('Authorization', `Bearer ${token}`);
+
       return res.status(200).json({
         success: true,
-        token: `Bearer ${token}`,
         isSignup: false,
         ...formatUserResponse(req.user),
       });
