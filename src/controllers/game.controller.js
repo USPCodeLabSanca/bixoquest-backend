@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const userService = require('../services/user.service');
+const {formatUser} = require('../lib/format-user');
 
 /**
  * Get user from token
