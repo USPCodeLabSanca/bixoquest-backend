@@ -320,9 +320,9 @@ async function authenticationSuccess(req, res, next) {
       expiresIn: '30d',
     });
 
-    if (req.user && req.user.nusp && req.user.course) {
-      res.setHeader('Authorization', `Bearer ${token}`);
+    res.setHeader('Authorization', `Bearer ${token}`);
 
+    if (req.user && req.user.nusp && req.user.course) {
       return res.status(200).json({
         success: true,
         isSignup: false,
@@ -332,7 +332,6 @@ async function authenticationSuccess(req, res, next) {
     return res.status(200).json({
       isSignup: true,
       success: true,
-      token: `Bearer ${token}`,
     });
   } catch (error) {
     console.log(error);
