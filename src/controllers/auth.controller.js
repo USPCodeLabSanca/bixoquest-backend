@@ -108,14 +108,13 @@ async function signupUspSecondStep(req, res, next) {
 
     const {
       course,
+      discord,
+      character,
     } = req.body;
 
-    const foundUser = await UserModel.findOne({email: req.user.email, nusp: req.user.nusp});
-    if (!foundUser) {
-      throw new createError.Unauthorized();
-    }
-
     foundUser.course = course;
+    foundUser.discord = discord;
+    foundUser.character = character;
     await foundUser.save();
 
     await sendEmail(
@@ -131,7 +130,7 @@ async function signupUspSecondStep(req, res, next) {
 
     res.setHeader('Authorization', `Bearer ${token}`);
 
-    return res.status(200).json(formatUserResponse(foundUser, houseWithLessMembers));
+    return res.status(200).json(formatUserResponse(foundUser));
   } catch (error) {
     console.log(error);
 

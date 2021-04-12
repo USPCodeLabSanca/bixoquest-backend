@@ -13,6 +13,7 @@ router.post(
       body('email', 'Invalid field \'email\'').isEmail(),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
       body('discord', 'Invalid field \'discord\'').not().isEmpty(),
+      body('course', 'Invalid field \'course\'').not().isEmpty(),
       body('character.skin', 'Invalid field \'character.skin\'').notEmpty().isInt({min: 0, max: 5}),
       body('character.cheek', 'Invalid field \'character.cheek\'').notEmpty().isInt({min: 0, max: 5}),
       body('character.clothBottom', 'Invalid field \'character.clothBottom\'').notEmpty().isInt({min: 0, max: 12}),
@@ -28,6 +29,8 @@ router.post(
 router.post(
     '/signup-usp-second-step',
     [
+      body('discord', 'Invalid field \'discord\'').not().isEmpty(),
+      body('course', 'Invalid field \'course\'').not().isEmpty(),
       body('character.skin', 'Invalid field \'character.skin\'').notEmpty().isInt({min: 0, max: 5}),
       body('character.cheek', 'Invalid field \'character.cheek\'').notEmpty().isInt({min: 0, max: 5}),
       body('character.clothBottom', 'Invalid field \'character.clothBottom\'').notEmpty().isInt({min: 0, max: 12}),
