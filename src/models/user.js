@@ -49,7 +49,8 @@ const UserSchema = Mongoose.Schema(
         default: 'Não informado',
       },
       friends: {
-        type: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        type: [{type: Schema.Types.ObjectId, ref: 'user'}],
+        default: [],
       },
       discord: {
         type: String,
@@ -57,15 +58,19 @@ const UserSchema = Mongoose.Schema(
       },
       completedMissions: {
         type: Array,
+        default: [],
       },
       availablePacks: {
         type: Number,
+        default: 0,
       },
       openedPacks: {
         type: Number,
+        default: 0,
       },
       stickers: {
         type: Array,
+        default: [],
       },
       lastTrade: {
         type: String,

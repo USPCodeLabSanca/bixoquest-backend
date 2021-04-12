@@ -27,7 +27,7 @@ module.exports.formatUser = function(user, fields) {
     updatedAt: user.updatedAt,
   };
 
-  for (field of Object.keys(formatedUser)) {
+  for (const field of Object.keys(formatedUser)) {
     if (fields.indexOf(field) === -1) delete formatedUser[field];
   }
 

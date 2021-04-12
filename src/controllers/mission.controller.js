@@ -1,25 +1,39 @@
+const createError = require('http-errors');
+
 const missionService = require('../services/mission.service');
 
 const missionController = {
-  getMissions: async (req, res) => {
+  getMissions: async (req, res, next) => {
     try {
       const missions = await missionService.getMissions();
 
       return res.status(200).json(missions);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getAllMissions: async (req, res) => {
+  getAllMissions: async (req, res, next) => {
     try {
       const missionsWithoutLatLng = await missionService.getAllMissions();
 
       return res.status(200).json(missionsWithoutLatLng);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getMission: async (req, res) => {
+  getMission: async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -27,10 +41,16 @@ const missionController = {
 
       return res.status(200).json(mission);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  getNearMissions: async (req, res) => {
+  getNearMissions: async (req, res, next) => {
     try {
       const {lat, lng} = req.query;
 
@@ -38,23 +58,35 @@ const missionController = {
 
       return res.status(200).json(nearMissions);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  completeMission: async (req, res) => {
+  completeMission: async (req, res, next) => {
     try {
       const {lat, lng, key} = req.body;
       const {id} = req.params;
-      const {id: userId} = req.auth;
+      const user = req.user;
 
-      const mission = await missionService.completeMission(lat, lng, key, id, userId);
+      const mission = await missionService.completeMission(lat, lng, key, id, user);
 
       return res.status(200).json(mission);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  createMission: async (req, res) => {
+  createMission: async (req, res, next) => {
     try {
       const {
         title,
@@ -84,10 +116,16 @@ const missionController = {
 
       return res.status(200).json(newMission);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
-  editMission: async (req, res) => {
+  editMission: async (req, res, next) => {
     try {
       const {id} = req.params;
       const {
@@ -122,7 +160,7 @@ const missionController = {
       return res.send(error);
     }
   },
-  deleteMission: async (req, res) => {
+  deleteMission: async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -130,7 +168,13 @@ const missionController = {
 
       return res.status(200).json(deletedMission);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
 };

@@ -20,7 +20,17 @@ function formatUserResponse(user) {
   return {
     success: true,
     message: 'Usuário autenticado com sucesso.',
-    user: formatUser(user, ['email', 'nusp', 'name', 'disord', 'course', 'character']),
+    user: formatUser(user, [
+      'email',
+      'nusp',
+      'name',
+      'discord',
+      'course',
+      'character',
+      'completedMissions',
+      'availablePacks',
+      'stickers',
+    ]),
   };
 }
 
