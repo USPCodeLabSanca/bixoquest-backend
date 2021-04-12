@@ -107,31 +107,32 @@ async function signupUspSecondStep(req, res, next) {
   try {
     handleValidationResult(req);
 
+    const user = req.user;
     const {
       course,
       discord,
       character,
     } = req.body;
 
-    foundUser.course = course;
-    foundUser.discord = discord;
-    foundUser.character = character;
-    await foundUser.save();
+    user.course = course;
+    user.discord = discord;
+    user.character = character;
+    await user.save();
 
     await sendEmail(
-        foundUser.email,
+        user.email,
         'Bem vindo ao BixoQuest 2021!',
         `Você se cadastrou no nosso app e já está tudo certo!!!`,
         `<div><h1>Voc&ecirc;&nbsp;se&nbsp;cadastrou&nbsp;no&nbsp;nosso&nbsp;app&nbsp;e&nbsp;j&aacute;&nbsp;est&aacute;&nbsp;tudo&nbsp;certo!!!</h1></div>`,
     );
 
-    const token = jwt.sign({data: {id: foundUser._id}}, process.env.JWT_PRIVATE_KEY, {
+    const token = jwt.sign({data: {id: user._id}}, process.env.JWT_PRIVATE_KEY, {
       expiresIn: '30d',
     });
 
     res.setHeader('Authorization', `Bearer ${token}`);
 
-    return res.status(200).json(formatUserResponse(foundUser));
+    return res.status(200).json(formatUserResponse(user));
   } catch (error) {
     console.log(error);
 
