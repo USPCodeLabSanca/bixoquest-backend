@@ -287,27 +287,17 @@ async function authenticateUser(data, cb) {
       nusp: user.loginUsuario,
       email: user.emailUspUsuario,
       name: user.nomeUsuario,
-      isAdmin: false,
       course: null,
-      completedMissions: [],
-      availablePacks: 0,
-      openedPacks: 0,
-      stickers: [],
-      lastTrade: null,
     });
+
     await newUser.save();
 
-    delete newUser.lastTrade;
-
     if (newUser) {
-      return cb(null, newUser);
+      return cb(null, formatUserResponse(newUser));
     }
   }
 
-  delete newUser.isAdmin;
-  delete newUser.lastTrade;
-
-  return cb(null, currentUser);
+  return cb(null, formatUserResponse(currentUser));
 }
 
 /**
