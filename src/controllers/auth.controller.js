@@ -288,7 +288,7 @@ async function authenticateUser(data, cb) {
       email: user.emailUspUsuario,
       name: user.nomeUsuario,
       isAdmin: false,
-      course: user.vinculo && user.vinculo[0] && user.vinculo[0].siglaUnidade,
+      course: null,
       completedMissions: [],
       availablePacks: 0,
       openedPacks: 0,
@@ -331,7 +331,7 @@ async function authenticationSuccess(req, res, next) {
       expiresIn: '30d',
     });
 
-    if (req.user && req.user.nusp) {
+    if (req.user && req.user.nusp && req.user.course) {
       return res.status(200).json({
         success: true,
         token: `Bearer ${token}`,
