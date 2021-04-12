@@ -23,7 +23,7 @@ const userController = {
 
       const {id} = req.params;
 
-      const user = await userService.getUserProfile(id);
+      const user = await userService.getUser(id);
 
       return res.status(200).json(user);
     } catch (error) {

@@ -4,26 +4,6 @@ const ObjectId = require('mongodb').ObjectID;
 const UserModel = require('../models/user');
 
 const userService = {
-  getUserBasicData: async (id) => {
-    const user = await UserModel
-        .findById(id);
-
-    if (!user) {
-      throw new createError.NotFound('Usuário não encontrado');
-    }
-
-    return user;
-  },
-  getUserProfile: async (id) => {
-    const user = await UserModel
-        .findById(id);
-
-    if (!user) {
-      throw new createError.NotFound(`Não foi encontrado usuário com o id ${id}`);
-    }
-
-    return user;
-  },
   addFriend: async (user, idFriend) => {
     const friend = await UserModel.findById(idFriend);
 

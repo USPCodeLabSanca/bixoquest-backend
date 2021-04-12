@@ -12,7 +12,12 @@ const userService = require('../services/user.service');
 async function getLoggedUser(token) {
   const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_PRIVATE_KEY).data;
 
-  const user = await userService.getUserProfile(decoded.id);
+  const user = formatUser(await userService.getUser(decoded.id), [
+    'name',
+    'discord',
+    'course',
+    'character',
+  ]);
 
   return user;
 };
