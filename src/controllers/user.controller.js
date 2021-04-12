@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 
 const userService = require('../services/user.service');
+const {handleValidationResult} = require('../lib/handle-validation-result');
 
 const userController = {
   getLoggedUser: async (req, res, next) => {
@@ -18,6 +19,8 @@ const userController = {
   },
   getUserProfile: async (req, res, next) => {
     try {
+      handleValidationResult(req);
+
       const {id} = req.params;
 
       const user = await userService.getUserProfile(id);
