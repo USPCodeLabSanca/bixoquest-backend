@@ -76,9 +76,9 @@ async function chatMessage(socket, token, text) {
   }
 }
 
-module.exports.httpsServer = (app) => {
-  const https = require('https').Server(app);
-  const io = require('socket.io')(https, {
+module.exports.httpServer = (app) => {
+  const http = require('http').Server(app);
+  const io = require('socket.io')(http, {
     cors: {
       origin: '*',
     },
@@ -102,5 +102,5 @@ module.exports.httpsServer = (app) => {
       await chatMessage(socket, token, text);
     });
   });
-  return https;
+  return http;
 };
