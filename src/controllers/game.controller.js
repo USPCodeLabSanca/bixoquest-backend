@@ -82,6 +82,7 @@ module.exports.httpServer = (app) => {
     cors: {
       origin: '*',
     },
+    path: '/socket.io',
     transports: ['websocket', 'polling'],
   });
 
