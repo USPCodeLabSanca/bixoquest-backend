@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const userService = require('../services/user.service');
+const MessageModel = require('../models/message');
 const {formatUser} = require('../lib/format-user');
 
 /**
@@ -46,6 +47,35 @@ async function move(socket, token, lat, lng) {
   }
 }
 
+/**
+ * Chat Message
+ *
+ * @param {object} socket
+ * @param {string} token
+ * @param {string} text
+ *
+ * @return {object}
+ */
+async function chatMessage(socket, token, text) {
+  try {
+    const user = await getLoggedUser(token);
+
+    const message = {
+      text,
+      user: user._id,
+    };
+    const createdMessage = new MessageModel(message);
+    createdMessage.save();
+
+    return socket.broadcast.emit('chat-message', {socketId: socket.id, user, message: createdMessage._doc});
+  } catch (e) {
+    if (e.message) {
+      return socket.emit('error-message', e.message);
+    }
+    return socket.emit('error-message', 'Erro de conexão');
+  }
+}
+
 module.exports.httpServer = (app) => {
   const http = require('http').Server(app);
   const io = require('socket.io')(http, {
@@ -64,6 +94,10 @@ module.exports.httpServer = (app) => {
 
     socket.on('move', async (token, lat, lng) => {
       await move(socket, token, lat, lng);
+    });
+
+    socket.on('chat-message', async (token, text) => {
+      await chatMessage(socket, token, text);
     });
   });
   return http;
