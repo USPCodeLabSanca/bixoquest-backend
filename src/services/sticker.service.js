@@ -9,7 +9,7 @@ const stickerService = {
       throw new createError.BadRequest('Você não possui essas figurinhas');
     }
 
-    const token = jwt.sign({data: {isMission: false, userId: user._id, stickers}}, process.env.JWT_PRIVATE_KEY, {
+    const token = jwt.sign({data: {isMission: false, userId: user._id, donatorName: user.name, stickers}}, process.env.JWT_PRIVATE_KEY, {
       expiresIn: '30d',
     });
 
