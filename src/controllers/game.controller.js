@@ -82,6 +82,7 @@ module.exports.httpServer = (app) => {
     cors: {
       origin: '*',
     },
+    transports: ['websocket'],
   });
 
   io.on('connection', (socket) => {
