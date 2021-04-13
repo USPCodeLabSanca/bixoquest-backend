@@ -1,9 +1,9 @@
 const {isPointWithinRadius} = require('geolib');
 const ObjectId = require('mongodb').ObjectID;
 const createError = require('http-errors');
+const jwt = require('jsonwebtoken');
 
 const MissionModel = require('../models/mission');
-const jwt = require('../lib/jwt');
 
 const missionService = {
   getMissions: async () => {
@@ -114,7 +114,9 @@ const missionService = {
     newMission.expirateAt = expirateAt;
     newMission.type = type;
     if (type === 'qrcode') {
-      newMission.key = jwt.create({isMission: true, missionId});
+      newMission.key = jwt.sign({data: {isMission: true, missionId}}, process.env.JWT_PRIVATE_KEY, {
+        expiresIn: '30d',
+      });
     } else {
       newMission.key = key;
     }

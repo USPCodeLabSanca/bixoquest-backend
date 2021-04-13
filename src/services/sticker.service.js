@@ -1,7 +1,7 @@
 const createError = require('http-errors');
+const jwt = require('jsonwebtoken');
 
 const UserModel = require('../models/user');
-const jwt = require('../lib/jwt');
 
 const stickerService = {
   donate: async (user, stickers) => {
@@ -9,7 +9,9 @@ const stickerService = {
       throw new createError.BadRequest('Você não possui essas figurinhas');
     }
 
-    const token = jwt.create({isMission: false, userId: user._id, stickers});
+    const token = jwt.sign({data: {isMission: false, userId: user._id, stickers}}, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: '30d',
+    });
 
     user.lastTrade = token;
     await user.save();
@@ -17,7 +19,7 @@ const stickerService = {
     return token;
   },
   receive: async (receiver, token) => {
-    const decodedToken = jwt.decode(token);
+    const decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY).data;
 
     const donator = await UserModel.findById(decodedToken.userId);
     if (!donator) {

@@ -1,5 +1,7 @@
 const {Router} = require('express');
 
+const jwt = require('jsonwebtoken');
+
 const authRouter = require('./auth.router');
 const backofficeRouter = require('./backoffice/index');
 const usersRouter = require('./user.router');
@@ -7,7 +9,6 @@ const friendsRouter = require('./friend.router');
 const packsRouter = require('./pack.router');
 const missionsRouter = require('./mission.router');
 const stickersRouter = require('./sticker.router');
-const jwt = require('../lib/jwt');
 
 const AuthMiddleware = require('../middlewares/auth.middleware');
 const MissionsController = require('../controllers/mission.controller');
@@ -32,7 +33,7 @@ router.post(
     (req, res) => {
       const {token} = req.body;
 
-      const decodedToken = jwt.decode(token);
+      const decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY).data;
 
       if (decodedToken.isMission) {
         req.params.id = decodedToken.missionId;
