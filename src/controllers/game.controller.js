@@ -83,7 +83,7 @@ module.exports.httpServer = (app) => {
       origin: '*',
     },
     path: '/socket.io',
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
   });
 
   io.on('connection', (socket) => {
