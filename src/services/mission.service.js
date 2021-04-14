@@ -42,11 +42,14 @@ const missionService = {
       if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
         return;
       }
-      if (mission.type === 'location' && !isPointWithinRadius(
-          {latitude: parseFloat(lat), longitude: parseFloat(lng)},
-          {latitude: mission.lat, longitude: mission.lng},
-          100,
-      )) {
+      if (
+        mission.type !== 'location' ||
+        mission.type === 'location' && !isPointWithinRadius(
+            {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+            {latitude: mission.lat, longitude: mission.lng},
+            100,
+        )
+      ) {
         return;
       }
       const missionWithoutKey = {...mission};
