@@ -44,11 +44,11 @@ const missionService = {
       }
       if (
         mission.type !== 'location' ||
-        mission.type === 'location' && !isPointWithinRadius(
+        (mission.type === 'location' && !isPointWithinRadius(
             {latitude: parseFloat(lat), longitude: parseFloat(lng)},
             {latitude: mission.lat, longitude: mission.lng},
             100,
-        )
+        ))
       ) {
         return;
       }
