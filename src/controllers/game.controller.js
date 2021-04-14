@@ -81,9 +81,6 @@ module.exports.httpServer = (app) => {
   const io = require('socket.io')(http, {
     cors: {
       origin: '*',
-      exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
-      methods: ['GET', 'POST'],
-      credentials: true,
     },
   });
 
