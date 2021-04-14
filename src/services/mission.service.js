@@ -43,18 +43,16 @@ const missionService = {
         return;
       }
       if (
-        mission.type !== 'location' ||
-        (mission.type === 'location' && !isPointWithinRadius(
+        mission.type === 'location' && isPointWithinRadius(
             {latitude: parseFloat(lat), longitude: parseFloat(lng)},
             {latitude: mission.lat, longitude: mission.lng},
             100,
-        ))
+        )
       ) {
-        return;
+        const missionWithoutKey = {...mission};
+        if (missionWithoutKey.key) delete missionWithoutKey.key;
+        nearMissions.push(missionWithoutKey);
       }
-      const missionWithoutKey = {...mission};
-      if (missionWithoutKey.key) delete missionWithoutKey.key;
-      nearMissions.push(missionWithoutKey);
     });
 
     return nearMissions;
