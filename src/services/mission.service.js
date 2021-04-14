@@ -15,7 +15,7 @@ const missionService = {
     const missions = await MissionModel.find();
     const missionsWithoutLatLngKey = [];
 
-    missions.map(({_doc: mission}, index) => {
+    missions.map(({_doc: mission}) => {
       const missionWithoutLatLngKey = {...mission};
       if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
       if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
@@ -38,7 +38,7 @@ const missionService = {
     const missions = await MissionModel.find();
     const nearMissions = [];
 
-    missions.map(({_doc: mission}, index) => {
+    missions.map(({_doc: mission}) => {
       if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
         return;
       }
@@ -53,7 +53,7 @@ const missionService = {
       if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
       if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
       if (missionWithoutLatLngKey.key) delete missionWithoutLatLngKey.key;
-      nearMissions.push(missionWithoutLatLng);
+      nearMissions.push(missionWithoutLatLngKey);
     });
 
     return nearMissions;
