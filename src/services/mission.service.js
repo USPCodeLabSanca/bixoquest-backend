@@ -13,17 +13,17 @@ const missionService = {
   },
   getAllMissions: async () => {
     const missions = await MissionModel.find();
-    const missionsWithoutLatLng = [];
+    const missionsWithoutLatLngKey = [];
 
     missions.map(({_doc: mission}, index) => {
-      const missionWithoutLatLng = {...mission};
-      if (missionWithoutLatLng.lat) delete missionWithoutLatLng.lat;
-      if (missionWithoutLatLng.lng) delete missionWithoutLatLng.lng;
-      if (missionWithoutLatLng.key) delete missionWithoutLatLng.key;
-      missionsWithoutLatLng.push(missionWithoutLatLng);
+      const missionWithoutLatLngKey = {...mission};
+      if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
+      if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
+      if (missionWithoutLatLngKey.key) delete missionWithoutLatLngKey.key;
+      missionsWithoutLatLngKey.push(missionWithoutLatLngKey);
     });
 
-    return missionsWithoutLatLng;
+    return missionsWithoutLatLngKey;
   },
   getMission: async (id) => {
     const mission = await MissionModel.findById({_id: id});
@@ -36,19 +36,24 @@ const missionService = {
   },
   getNearMissions: async (lat, lng) => {
     const missions = await MissionModel.find();
+    const nearMissions = [];
 
-    const nearMissions = missions.filter((mission) => {
+    missions.map(({_doc: mission}, index) => {
       if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
-        return false;
+        return;
       }
-      if (mission.type === 'location') {
-        return isPointWithinRadius(
-            {latitude: parseFloat(lat), longitude: parseFloat(lng)},
-            {latitude: mission.lat, longitude: mission.lng},
-            100,
-        );
+      if (mission.type === 'location' && !isPointWithinRadius(
+          {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+          {latitude: mission.lat, longitude: mission.lng},
+          100,
+      )) {
+        return;
       }
-      return true;
+      const missionWithoutLatLngKey = {...mission};
+      if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
+      if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
+      if (missionWithoutLatLngKey.key) delete missionWithoutLatLngKey.key;
+      nearMissions.push(missionWithoutLatLng);
     });
 
     return nearMissions;
