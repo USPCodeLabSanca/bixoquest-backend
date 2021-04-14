@@ -79,7 +79,6 @@ async function chatMessage(socket, token, text) {
 module.exports.httpServer = (app) => {
   const http = require('http').Server(app);
   const io = require('socket.io')(http, {
-    transports: ['websocket'],
     cors: {
       origin: '*',
       exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
