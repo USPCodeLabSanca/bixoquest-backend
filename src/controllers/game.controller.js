@@ -81,7 +81,7 @@ module.exports.httpServer = (app) => {
   const io = require('socket.io')(http, {
     transports: ['websocket'],
     cors: {
-      origin: [env.FRONTEND_URL, env.FRONTEND_LOCAL_URL, env.BACKOFFICE_URL, env.BACKOFFICE_LOCAL_URL],
+      origin: '*',
       exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
       methods: ['GET', 'POST'],
       credentials: true,
