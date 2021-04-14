@@ -49,11 +49,9 @@ const missionService = {
       )) {
         return;
       }
-      const missionWithoutLatLngKey = {...mission};
-      if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
-      if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
-      if (missionWithoutLatLngKey.key) delete missionWithoutLatLngKey.key;
-      nearMissions.push(missionWithoutLatLngKey);
+      const missionWithoutKey = {...mission};
+      if (missionWithoutKey.key) delete missionWithoutKey.key;
+      nearMissions.push(missionWithoutKey);
     });
 
     return nearMissions;
