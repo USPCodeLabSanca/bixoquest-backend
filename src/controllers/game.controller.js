@@ -15,6 +15,7 @@ async function getLoggedUser(token) {
   const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_PRIVATE_KEY).data;
 
   const user = formatUser(await userService.getUser(decoded.id), [
+    '_id',
     'name',
     'discord',
     'course',

@@ -1,5 +1,6 @@
 module.exports.formatUser = function(user, fields) {
   const formatedUser = {
+    _id: user._id,
     nusp: user.nusp,
     email: user.email,
     password: user.password,

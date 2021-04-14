@@ -16,10 +16,11 @@ const missionService = {
     const missionsWithoutLatLng = [];
 
     missions.map(({_doc: mission}, index) => {
-      missionsWithoutLatLng.push({...mission});
-      delete missionsWithoutLatLng[index].lat;
-      delete missionsWithoutLatLng[index].lng;
-      delete missionsWithoutLatLng[index].key;
+      const missionWithoutLatLng = {...mission};
+      if (missionWithoutLatLng.lat) delete missionWithoutLatLng.lat;
+      if (missionWithoutLatLng.lng) delete missionWithoutLatLng.lng;
+      if (missionWithoutLatLng.key) delete missionWithoutLatLng.key;
+      missionsWithoutLatLng.push(missionWithoutLatLng);
     });
 
     return missionsWithoutLatLng;
