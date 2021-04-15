@@ -4,7 +4,7 @@ const UserModel = require('../models/user');
 
 const stickerService = {
   donate: async (donator, stickers, receiverId) => {
-    if (stickers.some((sticker) => user.stickers.indexOf(sticker) === -1)) {
+    if (stickers.some((sticker) => donator.stickers.indexOf(sticker) === -1)) {
       throw new createError.BadRequest('Você não possui essas figurinhas');
     }
 
