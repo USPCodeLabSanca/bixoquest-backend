@@ -17,5 +17,5 @@ module.exports.formatMission = function(mission, fields) {
     if (fields.indexOf(field) === -1) delete formatedMission[field];
   }
 
-  return formatMission;
+  return formatedMission;
 };

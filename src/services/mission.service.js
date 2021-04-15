@@ -13,7 +13,7 @@ const missionService = {
     const missionsWithoutLatLngKey = [];
 
     for (const mission of missions) {
-      missionsWithoutLatLngKey.push(formatMission(mission, {_id, title, description, availableAt, expirateAt, type, isSpecial}));
+      missionsWithoutLatLngKey.push(formatMission(mission, ['_id', 'title', 'description', 'availableAt', 'expirateAt', 'type', 'isSpecial']));
     }
 
     return missionsWithoutLatLngKey;
@@ -36,7 +36,7 @@ const missionService = {
         )
       ) {
         nearMissions.push(
-            formatMission(mission, {_id, title, description, lat, lng, availableAt, expirateAt, type, isSpecial}),
+            formatMission(mission, ['_id', 'title', 'description', 'lat', 'lng', 'availableAt', 'expirateAt', 'type', 'isSpecial']),
         );
       }
     }
@@ -91,7 +91,7 @@ const missionService = {
     }
     await user.save();
 
-    return formatMission(mission, {_id, title, description, availableAt, expirateAt, type, isSpecial});
+    return formatMission(mission, ['_id', 'title', 'description', 'availableAt', 'expirateAt', 'type', 'isSpecial']);
   },
   // Backoffice
   getMissions: async () => {
