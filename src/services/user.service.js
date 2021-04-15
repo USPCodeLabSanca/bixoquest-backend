@@ -78,18 +78,6 @@ const userService = {
 
     return deletedUser;
   },
-  migrateUsers: async () => {
-    const users = await UserModel.find();
-
-    for await (const user of users) {
-      if (!user.availableSpecialPacks) user.availableSpecialPacks = 0;
-      if (!user.openedSpecialPacks) user.openedSpecialPacks = 0;
-      if (!user.specialStickers) user.specialStickers = [];
-      return user.save();
-    }
-
-    return users;
-  },
 };
 
 module.exports = userService;

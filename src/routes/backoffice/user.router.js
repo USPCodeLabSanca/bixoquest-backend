@@ -24,15 +24,6 @@ router.get(
 );
 
 router.post(
-    '/migrate',
-    [
-      AdminAuthMiddleware.authenticate,
-      AdminAuthMiddleware.isAuthenticated,
-    ],
-    UsersController.migrateUsers,
-);
-
-router.post(
     '/',
     [
       AdminAuthMiddleware.authenticate,
