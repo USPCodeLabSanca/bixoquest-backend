@@ -3,43 +3,12 @@ const createError = require('http-errors');
 const missionService = require('../services/mission.service');
 
 const missionController = {
-  getMissions: async (req, res, next) => {
-    try {
-      const missions = await missionService.getMissions();
-
-      return res.status(200).json(missions);
-    } catch (error) {
-      console.log(error);
-
-      if (!createError.isHttpError(error)) {
-        error = new createError.InternalServerError('Erro no servidor.');
-      }
-
-      return next(error);
-    }
-  },
+  // App
   getAllMissions: async (req, res, next) => {
     try {
-      const missionsWithoutLatLng = await missionService.getAllMissions();
+      const missionsWithoutLatLngKey = await missionService.getAllMissions();
 
-      return res.status(200).json(missionsWithoutLatLng);
-    } catch (error) {
-      console.log(error);
-
-      if (!createError.isHttpError(error)) {
-        error = new createError.InternalServerError('Erro no servidor.');
-      }
-
-      return next(error);
-    }
-  },
-  getMission: async (req, res, next) => {
-    try {
-      const {id} = req.params;
-
-      const mission = await missionService.getMission(id);
-
-      return res.status(200).json(mission);
+      return res.status(200).json(missionsWithoutLatLngKey);
     } catch (error) {
       console.log(error);
 
@@ -74,6 +43,39 @@ const missionController = {
       const user = req.user;
 
       const mission = await missionService.completeMission(lat, lng, key, id, user);
+
+      return res.status(200).json(mission);
+    } catch (error) {
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
+    }
+  },
+  // Backoffice
+  getMissions: async (req, res, next) => {
+    try {
+      const missions = await missionService.getMissions();
+
+      return res.status(200).json(missions);
+    } catch (error) {
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
+    }
+  },
+  getMission: async (req, res, next) => {
+    try {
+      const {id} = req.params;
+
+      const mission = await missionService.getMission(id);
 
       return res.status(200).json(mission);
     } catch (error) {
@@ -157,7 +159,13 @@ const missionController = {
 
       return res.status(200).json(editedMission);
     } catch (error) {
-      return res.send(error);
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
     }
   },
   deleteMission: async (req, res, next) => {

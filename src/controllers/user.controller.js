@@ -153,6 +153,21 @@ const userController = {
       return next(error);
     }
   },
+  migrateUsers: async (req, res, next) => {
+    try {
+      const users = await userService.migrateUsers();
+
+      return res.status(200).json(users);
+    } catch (error) {
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
+    }
+  },
 };
 
 module.exports = userController;

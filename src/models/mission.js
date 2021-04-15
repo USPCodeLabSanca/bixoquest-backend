@@ -16,7 +16,11 @@ const missionSchema = Mongoose.Schema(
       key: String,
       type: {
         type: String,
-        enum: ['location', 'qrcode', 'key'],
+        enum: ['location', 'key', 'location-with-key', 'qrcode'],
+      },
+      isSpecial: {
+        type: Boolean,
+        default: false,
       },
     },
     {collection: 'missions'},

@@ -66,7 +66,7 @@ async function chatMessage(socket, token, text) {
       user: user._id,
     };
     const createdMessage = new MessageModel(message);
-    createdMessage.save();
+    await createdMessage.save();
 
     return socket.broadcast.emit('chat-message', {socketId: socket.id, user, message: createdMessage._doc});
   } catch (e) {
