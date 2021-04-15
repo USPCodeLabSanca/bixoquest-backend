@@ -4,68 +4,58 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
 const MissionModel = require('../models/mission');
+const {formatMission} = require('../lib/format-mission');
 
 const missionService = {
-  getMissions: async () => {
-    const missions = await MissionModel.find();
-
-    return missions;
-  },
+  // App
   getAllMissions: async () => {
-    const missions = await MissionModel.find();
+    const missions = await MissionModel.find({}, null, {rawResult: true});
     const missionsWithoutLatLngKey = [];
 
-    missions.map(({_doc: mission}) => {
-      const missionWithoutLatLngKey = {...mission};
-      if (missionWithoutLatLngKey.lat) delete missionWithoutLatLngKey.lat;
-      if (missionWithoutLatLngKey.lng) delete missionWithoutLatLngKey.lng;
-      if (missionWithoutLatLngKey.key) delete missionWithoutLatLngKey.key;
-      missionsWithoutLatLngKey.push(missionWithoutLatLngKey);
-    });
+    for (const mission of missions) {
+      missionsWithoutLatLngKey.push(formatMission(mission, ['_id', 'title', 'description', 'locationReference', 'availableAt', 'expirateAt', 'type', 'isSpecial']));
+    }
 
     return missionsWithoutLatLngKey;
   },
-  getMission: async (id) => {
-    const mission = await MissionModel.findById({_id: id});
-
-    if (!mission) {
-      throw new createError.NotFound(`Não foi encontrada missão com o id ${id}`);
-    }
-
-    return mission;
-  },
   getNearMissions: async (lat, lng) => {
-    const missions = await MissionModel.find();
+    const missions = await MissionModel.find({}, null, {rawResult: true});
     const nearMissions = [];
 
-    missions.map(({_doc: mission}) => {
+    for (const mission of missions) {
       if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
         return;
       }
+
       if (
-        mission.type === 'location' && isPointWithinRadius(
+        (mission.type === 'location' || mission.type === 'location-with-key') &&
+        isPointWithinRadius(
             {latitude: parseFloat(lat), longitude: parseFloat(lng)},
             {latitude: mission.lat, longitude: mission.lng},
             100,
         )
       ) {
-        const missionWithoutKey = {...mission};
-        if (missionWithoutKey.key) delete missionWithoutKey.key;
-        nearMissions.push(missionWithoutKey);
+        nearMissions.push(
+            formatMission(mission, ['_id', 'title', 'description', 'locationReference', 'lat', 'lng', 'availableAt', 'expirateAt', 'type', 'isSpecial']),
+        );
       }
-    });
+    }
 
     return nearMissions;
   },
   completeMission: async (lat, lng, key, id, user) => {
     const mission = await MissionModel.findById({_id: id});
 
-    if (!['location', 'qrcode', 'key'].includes(mission.type)) {
+    if (!['location', 'qrcode', 'key', 'location-with-key', 'group'].includes(mission.type)) {
       throw new createError.BadRequest('Erro no tipo da missão.');
     }
 
     if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
       throw new createError.BadRequest('Missão não disponível.');
+    }
+
+    if (user.completedMissions.includes(mission._id)) {
+      throw new createError.BadRequest('Missão já realizada');
     }
 
     if (mission.type === 'location') {
@@ -80,15 +70,41 @@ const missionService = {
       if (mission.key !== key) {
         throw new createError.BadRequest('Senha incorreta.');
       }
-    }
-
-    if (user.completedMissions.includes(mission._id)) {
-      throw new createError.BadRequest('Missão já realizada');
+    } else if (mission.type === 'locaton-with-key') {
+      if (!isPointWithinRadius(
+          {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+          {latitude: mission.lat, longitude: mission.lng},
+          50,
+      )) {
+        throw new createError.BadRequest('Fora do campo da missão.');
+      }
+      if (mission.key !== key) {
+        throw new createError.BadRequest('Senha incorreta.');
+      }
     }
 
     user.completedMissions.push(mission._id);
-    user.availablePacks += mission.numberOfPacks;
-    user.save();
+    if (mission.isSpecial) {
+      user.availableSpecialPacks += mission.numberOfPacks;
+    } else {
+      user.availablePacks += mission.numberOfPacks;
+    }
+    await user.save();
+
+    return formatMission(mission, ['_id', 'title', 'description', 'locationReference', 'availableAt', 'expirateAt', 'type', 'isSpecial']);
+  },
+  // Backoffice
+  getMissions: async () => {
+    const missions = await MissionModel.find({}, null, {rawResult: true});
+
+    return missions;
+  },
+  getMission: async (id) => {
+    const mission = await MissionModel.findById(id, null, {rawResult: true});
+
+    if (!mission) {
+      throw new createError.NotFound(`Não foi encontrada missão com o id ${id}`);
+    }
 
     return mission;
   },
@@ -103,29 +119,38 @@ const missionService = {
       expirateAt,
       key,
       type,
+      isSpecial,
   ) => {
-    const newMission = new MissionModel();
+    const newMissionObj = {
+      _id: new ObjectId(),
+      title: title,
+      locationReference: locationReference,
+      description: description,
+      numberOfPacks: numberOfPacks,
+      availableAt: availableAt,
+      expirateAt: expirateAt,
+      type: type,
+      isSpecial: isSpecial,
+    };
 
-    const missionId = new ObjectId();
-
-    newMission._id = missionId;
-    newMission.title = title;
-    newMission.locationReference = locationReference;
-    newMission.description = description;
-    newMission.numberOfPacks = numberOfPacks;
-    newMission.lat = lat;
-    newMission.lng = lng;
-    newMission.availableAt = availableAt;
-    newMission.expirateAt = expirateAt;
-    newMission.type = type;
     if (type === 'qrcode') {
-      newMission.key = jwt.sign({data: {isMission: true, missionId}}, process.env.JWT_PRIVATE_KEY, {
+      newMissionObj.key = jwt.sign({data: {isMission: true, missionId}}, process.env.JWT_PRIVATE_KEY, {
         expiresIn: '30d',
       });
+    } else if (type === 'location') {
+      newMissionObj.lat = lat;
+      newMissionObj.lng = lng;
+    } else if (type === 'key') {
+      newMissionObj.key = key;
+    } else if (type === 'locaton-with-key') {
+      newMissionObj.lat = lat;
+      newMissionObj.lng = lng;
+      newMissionObj.key = key;
     } else {
-      newMission.key = key;
+      throw new createError.BadRequest('Erro no tipo da missão.');
     }
 
+    const newMission = new MissionModel(newMissionObj);
     await newMission.save();
 
     return newMission;
@@ -142,6 +167,7 @@ const missionService = {
       expirateAt,
       key,
       type,
+      isSpecial,
   ) => {
     const editedMission = await MissionModel.findByIdAndUpdate(
         id,
@@ -156,6 +182,7 @@ const missionService = {
           expirateAt,
           key,
           type,
+          isSpecial,
         },
         {new: true},
     );

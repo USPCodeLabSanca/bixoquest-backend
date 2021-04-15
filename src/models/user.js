@@ -72,8 +72,17 @@ const UserSchema = Mongoose.Schema(
         type: Array,
         default: [],
       },
-      lastTrade: {
-        type: String,
+      availableSpecialPacks: {
+        type: Number,
+        default: 0,
+      },
+      openedSpecialPacks: {
+        type: Number,
+        default: 0,
+      },
+      specialStickers: {
+        type: Array,
+        default: [],
       },
       resetPasswordCode: {
         type: String,

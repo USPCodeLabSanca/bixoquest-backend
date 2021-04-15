@@ -38,8 +38,6 @@ router.post(
       if (decodedToken.isMission) {
         req.params.id = decodedToken.missionId;
         MissionsController.completeMission(req, res);
-      } else {
-        StickersController.receive(req, res);
       }
     },
 );

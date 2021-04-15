@@ -14,4 +14,13 @@ router.post(
     PacksController.openPack,
 );
 
+router.post(
+    '/special/open',
+    [
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    PacksController.openSpecialPack,
+);
+
 module.exports = router;

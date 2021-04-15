@@ -15,15 +15,6 @@ router.get(
 );
 
 router.get(
-    '/:id',
-    [
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-    ],
-    MissionsController.getMission,
-);
-
-router.get(
     '/',
     [
       AuthMiddleware.authenticate,
