@@ -11,20 +11,11 @@ router.post(
     '/donate',
     [
       body('stickers', 'Invalid field \'stickers\'').not().isEmpty(),
+      body('userId', 'Invalid field \'userId\'').not().isEmpty(),
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
     StickersController.donate,
-);
-
-router.post(
-    '/receive',
-    [
-      body('token', 'Invalid field \'token\'').not().isEmpty(),
-      AuthMiddleware.authenticate,
-      AuthMiddleware.isAuthenticated,
-    ],
-    StickersController.receive,
 );
 
 module.exports = router;

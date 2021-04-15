@@ -84,9 +84,6 @@ const UserSchema = Mongoose.Schema(
         type: Array,
         default: [],
       },
-      lastTrade: {
-        type: String,
-      },
       resetPasswordCode: {
         type: String,
       },
