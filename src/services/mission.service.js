@@ -24,7 +24,7 @@ const missionService = {
 
     for (const mission of missions) {
       if (new Date() < mission.availableAt || new Date() > mission.expirateAt) {
-        return;
+        continue;
       }
 
       if (
