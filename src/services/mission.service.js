@@ -58,7 +58,7 @@ const missionService = {
       throw new createError.BadRequest('Missão já realizada');
     }
 
-    if (type === 'location') {
+    if (mission.type === 'location') {
       if (!isPointWithinRadius(
           {latitude: parseFloat(lat), longitude: parseFloat(lng)},
           {latitude: mission.lat, longitude: mission.lng},
@@ -66,11 +66,11 @@ const missionService = {
       )) {
         throw new createError.BadRequest('Fora do campo da missão.');
       }
-    } else if (type === 'key') {
+    } else if (mission.type === 'key') {
       if (mission.key !== key) {
         throw new createError.BadRequest('Senha incorreta.');
       }
-    } else if (type === 'locaton-with-key') {
+    } else if (mission.type === 'locaton-with-key') {
       if (!isPointWithinRadius(
           {latitude: parseFloat(lat), longitude: parseFloat(lng)},
           {latitude: mission.lat, longitude: mission.lng},

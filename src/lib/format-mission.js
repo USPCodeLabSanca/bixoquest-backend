@@ -3,6 +3,7 @@ module.exports.formatMission = function(mission, fields) {
     _id: mission._id,
     title: mission.title,
     description: mission.description,
+    locationReference: mission.locationReference,
     numberOfPacks: mission.numberOfPacks,
     lat: mission.lat,
     lng: mission.lng,
