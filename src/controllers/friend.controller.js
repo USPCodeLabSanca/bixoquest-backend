@@ -12,6 +12,7 @@ const userController = {
       const friend = await userService.addFriend(user, idFriend);
 
       return res.status(200).json(formatUser(friend, [
+        '_id',
         'name',
         'discord',
         'course',
@@ -36,6 +37,7 @@ const userController = {
       const formatedFriends = [];
       for (const friend of friends) {
         formatedFriends.push(formatUser(friend, [
+          '_id',
           'name',
           'discord',
           'course',
