@@ -31,6 +31,9 @@ function formatUserResponse(user) {
       'completedMissions',
       'availablePacks',
       'stickers',
+      'availableSpecialPacks',
+      'openedSpecialPacks',
+      'specialStickers',
       'friends',
     ]),
   };
