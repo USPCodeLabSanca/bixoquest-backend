@@ -101,6 +101,7 @@ const missionController = {
         expirateAt,
         key,
         type,
+        isSpecial,
       } = req.body;
 
       const newMission = await missionService.createMission(
@@ -114,6 +115,7 @@ const missionController = {
           expirateAt,
           key,
           type,
+          isSpecial,
       );
 
       return res.status(200).json(newMission);
@@ -141,6 +143,7 @@ const missionController = {
         expirateAt,
         key,
         type,
+        isSpecial,
       } = req.body;
 
       const editedMission = await missionService.editMission(
@@ -155,6 +158,7 @@ const missionController = {
           expirateAt,
           key,
           type,
+          isSpecial,
       );
 
       return res.status(200).json(editedMission);
