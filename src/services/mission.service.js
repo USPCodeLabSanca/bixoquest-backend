@@ -67,7 +67,7 @@ const missionService = {
         throw new createError.BadRequest('Fora do campo da missão.');
       }
     } else if (mission.type === 'key') {
-      if (mission.key !== key) {
+      if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
         throw new createError.BadRequest('Senha incorreta.');
       }
     } else if (mission.type === 'locaton-with-key') {
@@ -78,7 +78,7 @@ const missionService = {
       )) {
         throw new createError.BadRequest('Fora do campo da missão.');
       }
-      if (mission.key !== key) {
+      if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
         throw new createError.BadRequest('Senha incorreta.');
       }
     }
