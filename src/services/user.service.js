@@ -9,9 +9,9 @@ const userService = {
 
     if (!friend) {
       throw new createError.NotFound(`Não foi encontrado usuário com o id ${idFriend}`);
-    } else if (friend._id == user._id) {
+    } else if (friend._id.toString() == user._id.toString()) {
       throw new createError.BadRequest('Não pode adicionar o mesmo usuário que requisitou');
-    } else if (user.friends.find((friend) => friend === idFriend)) {
+    } else if (user.friends.find((friend) => friend.toString() === idFriend.toString())) {
       throw new createError.BadRequest('Usuário já foi adicionado');
     }
 
