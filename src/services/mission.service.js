@@ -97,7 +97,7 @@ const missionService = {
 
         await mission.save();
 
-        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt};
+        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
       }
       const missionCloseAt = new Date(mission.lastJoinAt);
       missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
@@ -108,7 +108,7 @@ const missionService = {
 
         await mission.save();
 
-        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt};
+        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
       } else {
         if (!mission.users.find((missionUser) => missionUser._id === user._id)) {
           mission.users.push(user);
@@ -128,7 +128,7 @@ const missionService = {
           }
           return formatMissionWithoutKeyLatLngUsers(mission);
         } else {
-          return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt};
+          return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
         }
       }
     } else {
