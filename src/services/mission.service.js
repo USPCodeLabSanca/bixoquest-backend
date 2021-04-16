@@ -102,7 +102,10 @@ const missionService = {
         console.log(mission.users.find((missionUser) => missionUser._id === user._id));
         console.log('mission.users');
         console.log(mission.users);
-        if (!mission.users.find((missionUser) => missionUser._id === user._id)) {
+        console.log('user._id');
+        console.log(user._id);
+        if (!mission.users.some((missionUser) => missionUser._id === user._id)) {
+          console.log('entrou');
           mission.users.push(user);
         }
         console.log(mission.users);
