@@ -102,6 +102,7 @@ const missionController = {
         key,
         type,
         isSpecial,
+        minimumOfUsersToComplete,
       } = req.body;
 
       const newMission = await missionService.createMission(
@@ -116,6 +117,7 @@ const missionController = {
           key,
           type,
           isSpecial,
+          minimumOfUsersToComplete,
       );
 
       return res.status(200).json(newMission);
@@ -144,6 +146,7 @@ const missionController = {
         key,
         type,
         isSpecial,
+        minimumOfUsersToComplete,
       } = req.body;
 
       const editedMission = await missionService.editMission(
@@ -159,6 +162,7 @@ const missionController = {
           key,
           type,
           isSpecial,
+          minimumOfUsersToComplete,
       );
 
       return res.status(200).json(editedMission);
