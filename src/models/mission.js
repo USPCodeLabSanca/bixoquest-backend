@@ -16,8 +16,14 @@ const missionSchema = Mongoose.Schema(
       key: String,
       type: {
         type: String,
-        enum: ['location', 'key', 'location-with-key', 'qrcode'],
+        enum: ['location', 'key', 'location-with-key', 'qrcode', 'group'],
       },
+      minimumOfUsersToComplete: Number,
+      users: {
+        type: [{type: Schema.Types.ObjectId, ref: 'user'}],
+        default: [],
+      },
+      lastJoinAt: Number,
       isSpecial: {
         type: Boolean,
         default: false,
