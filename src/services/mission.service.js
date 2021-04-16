@@ -105,7 +105,6 @@ const missionService = {
         if (!mission.users.find((missionUser) => missionUser._id === user._id)) {
           mission.users.push(user);
         }
-        mission.save();
         if (mission.users.length >= mission.minimumOfUsersToComplete) {
           for await (const missionUser of mission.users) {
             if (!missionUser.completedMissions.includes(mission._id)) {
@@ -122,6 +121,7 @@ const missionService = {
 
           return formatMissionWithoutKeyLatLngUsers(mission);
         } else {
+          await mission.save();
           return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
         }
       }
