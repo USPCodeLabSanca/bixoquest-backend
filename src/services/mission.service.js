@@ -112,6 +112,7 @@ const missionService = {
               } else {
                 missionUser.availablePacks += mission.numberOfPacks;
               }
+              missionUser.save();
             }
           }
 
