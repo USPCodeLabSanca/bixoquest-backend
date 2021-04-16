@@ -115,9 +115,11 @@ const missionService = {
               } else {
                 missionUser.availablePacks += mission.numberOfPacks;
               }
-              await missionUser.save();
             }
           }
+
+          await mission.save();
+
           return formatMissionWithoutKeyLatLngUsers(mission);
         } else {
           return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
