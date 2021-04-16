@@ -52,7 +52,7 @@ const missionService = {
       }
 
       if (
-        (mission.type === 'location' || mission.type === 'location-with-key') &&
+        (mission.type === 'location' || mission.type === 'location-with-key' || mission.type === 'group') &&
         isPointWithinRadius(
             {latitude: parseFloat(lat), longitude: parseFloat(lng)},
             {latitude: mission.lat, longitude: mission.lng},
