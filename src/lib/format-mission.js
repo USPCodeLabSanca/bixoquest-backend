@@ -12,6 +12,7 @@ module.exports.formatMission = function(mission, fields) {
     key: mission.key,
     type: mission.type,
     isSpecial: mission.isSpecial,
+    minimumOfUsersToComplete: mission.minimumOfUsersToComplete,
   };
 
   for (const field of Object.keys(formatedMission)) {
