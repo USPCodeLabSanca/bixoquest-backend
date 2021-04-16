@@ -4,7 +4,32 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
 const MissionModel = require('../models/mission');
+const UserModel = require('../models/user');
 const {formatMission} = require('../lib/format-mission');
+
+const MINUTES_TO_CLOSE_GROUP_MISSION = 1;
+
+/**
+ * formatMissionWithoutKeyLatLngUsers
+ *
+ * @param {object} mission
+ *
+ * @return {object}
+ */
+function formatMissionWithoutKeyLatLngUsers(mission) {
+  return formatMission(mission, [
+    '_id',
+    'title',
+    'description',
+    'locationReference',
+    'availableAt',
+    'expirateAt',
+    'type',
+    'isSpecial',
+    'numberOfPacks',
+    `minimumOfUsersToComplete`,
+  ]);
+}
 
 const missionService = {
   // App
@@ -13,7 +38,7 @@ const missionService = {
     const missionsWithoutLatLngKey = [];
 
     for (const mission of missions) {
-      missionsWithoutLatLngKey.push(formatMission(mission, ['_id', 'title', 'description', 'locationReference', 'availableAt', 'expirateAt', 'type', 'isSpecial', 'numberOfPacks']));
+      missionsWithoutLatLngKey.push(formatMissionWithoutKeyLatLngUsers(mission));
     }
 
     return missionsWithoutLatLngKey;
@@ -28,7 +53,7 @@ const missionService = {
       }
 
       if (
-        (mission.type === 'location' || mission.type === 'location-with-key') &&
+        (mission.type === 'location' || mission.type === 'location-with-key' || mission.type === 'group') &&
         isPointWithinRadius(
             {latitude: parseFloat(lat), longitude: parseFloat(lng)},
             {latitude: mission.lat, longitude: mission.lng},
@@ -44,7 +69,7 @@ const missionService = {
     return nearMissions;
   },
   completeMission: async (lat, lng, key, id, user) => {
-    const mission = await MissionModel.findById({_id: id});
+    const mission = await MissionModel.findById({_id: id}).populate('users');
 
     if (!['location', 'qrcode', 'key', 'location-with-key', 'group'].includes(mission.type)) {
       throw new createError.BadRequest('Erro no tipo da missão.');
@@ -54,11 +79,7 @@ const missionService = {
       throw new createError.BadRequest('Missão não disponível.');
     }
 
-    if (user.completedMissions.includes(mission._id)) {
-      throw new createError.BadRequest('Missão já realizada');
-    }
-
-    if (mission.type === 'location') {
+    if (mission.type === 'group') {
       if (!isPointWithinRadius(
           {latitude: parseFloat(lat), longitude: parseFloat(lng)},
           {latitude: mission.lat, longitude: mission.lng},
@@ -66,32 +87,85 @@ const missionService = {
       )) {
         throw new createError.BadRequest('Fora do campo da missão.');
       }
-    } else if (mission.type === 'key') {
-      if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
-        throw new createError.BadRequest('Senha incorreta.');
+      if (user.completedMissions.includes(mission._id)) {
+        return formatMissionWithoutKeyLatLngUsers(mission);
       }
-    } else if (mission.type === 'locaton-with-key') {
-      if (!isPointWithinRadius(
-          {latitude: parseFloat(lat), longitude: parseFloat(lng)},
-          {latitude: mission.lat, longitude: mission.lng},
-          50,
-      )) {
-        throw new createError.BadRequest('Fora do campo da missão.');
-      }
-      if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
-        throw new createError.BadRequest('Senha incorreta.');
-      }
-    }
+      if (!mission.lastJoinAt || Date.now() > (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))) {
+        mission.lastJoinAt = Date.now();
+        mission.users = [];
+        mission.users.push(user);
 
-    user.completedMissions.push(mission._id);
-    if (mission.isSpecial) {
-      user.availableSpecialPacks += mission.numberOfPacks;
+        await mission.save();
+
+        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
+      } else {
+        if (!mission.users.some((missionUser) => {
+          return missionUser._id.toString() === user._id.toString();
+        })) {
+          mission.users.push(user);
+        }
+        if (mission.users.length >= mission.minimumOfUsersToComplete) {
+          for await (const missionUser of mission.users) {
+            if (!missionUser.completedMissions.includes(mission._id)) {
+              const userToUpdate = await UserModel.findById(missionUser._id);
+              userToUpdate.completedMissions.push(mission._id);
+              if (mission.isSpecial) {
+                userToUpdate.availableSpecialPacks += mission.numberOfPacks;
+              } else {
+                userToUpdate.availablePacks += mission.numberOfPacks;
+              }
+              await userToUpdate.save();
+            }
+          }
+
+          await mission.save();
+
+          return formatMissionWithoutKeyLatLngUsers(mission);
+        } else {
+          await mission.save();
+          return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
+        }
+      }
     } else {
-      user.availablePacks += mission.numberOfPacks;
-    }
-    await user.save();
+      if (user.completedMissions.includes(mission._id)) {
+        throw new createError.BadRequest('Missão já realizada');
+      }
 
-    return formatMission(mission, ['_id', 'title', 'description', 'locationReference', 'availableAt', 'expirateAt', 'type', 'isSpecial', 'numberOfPacks']);
+      if (mission.type === 'location') {
+        if (!isPointWithinRadius(
+            {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+            {latitude: mission.lat, longitude: mission.lng},
+            50,
+        )) {
+          throw new createError.BadRequest('Fora do campo da missão.');
+        }
+      } else if (mission.type === 'key') {
+        if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
+          throw new createError.BadRequest('Senha incorreta.');
+        }
+      } else if (mission.type === 'locaton-with-key') {
+        if (!isPointWithinRadius(
+            {latitude: parseFloat(lat), longitude: parseFloat(lng)},
+            {latitude: mission.lat, longitude: mission.lng},
+            50,
+        )) {
+          throw new createError.BadRequest('Fora do campo da missão.');
+        }
+        if (mission.key.trim().toLowerCase().replace(/ /g, '') !== key.trim().toLowerCase().replace(/ /g, '')) {
+          throw new createError.BadRequest('Senha incorreta.');
+        }
+      }
+
+      user.completedMissions.push(mission._id);
+      if (mission.isSpecial) {
+        user.availableSpecialPacks += mission.numberOfPacks;
+      } else {
+        user.availablePacks += mission.numberOfPacks;
+      }
+      await user.save();
+
+      return formatMissionWithoutKeyLatLngUsers(mission);
+    }
   },
   // Backoffice
   getMissions: async () => {
@@ -120,6 +194,7 @@ const missionService = {
       key,
       type,
       isSpecial,
+      minimumOfUsersToComplete,
   ) => {
     const newMissionObj = {
       _id: new ObjectId(),
@@ -131,6 +206,7 @@ const missionService = {
       expirateAt: expirateAt,
       type: type,
       isSpecial: isSpecial,
+      minimumOfUsersToComplete,
     };
 
     if (type === 'qrcode') {
@@ -146,6 +222,10 @@ const missionService = {
       newMissionObj.lat = lat;
       newMissionObj.lng = lng;
       newMissionObj.key = key;
+    } else if (type === 'group') {
+      newMissionObj.lat = lat;
+      newMissionObj.lng = lng;
+      newMissionObj.minimumOfUsersToComplete = minimumOfUsersToComplete;
     } else {
       throw new createError.BadRequest('Erro no tipo da missão.');
     }
@@ -168,6 +248,7 @@ const missionService = {
       key,
       type,
       isSpecial,
+      minimumOfUsersToComplete,
   ) => {
     const editedMission = await MissionModel.findByIdAndUpdate(
         id,
@@ -183,6 +264,7 @@ const missionService = {
           key,
           type,
           isSpecial,
+          minimumOfUsersToComplete,
         },
         {new: true},
     );
