@@ -89,16 +89,18 @@ const missionService = {
       if (user.completedMissions.includes(mission._id)) {
         return formatMissionWithoutKeyLatLngUsers(mission);
       }
-      const missionCloseAt = new Date(mission.lastJoinAt);
-      missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
       if (mission.user.length === 0) {
         mission.lastJoinAt = Date.now();
         mission.users.push(user);
+        const missionCloseAt = new Date(mission.lastJoinAt);
+        missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
 
         await mission.save();
 
         return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt};
       }
+      const missionCloseAt = new Date(mission.lastJoinAt);
+      missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
       if (Date.now() > missionCloseAt.getTime()) {
         mission.users = [];
         mission.lastJoinAt = Date.now();
