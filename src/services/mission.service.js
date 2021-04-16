@@ -89,7 +89,7 @@ const missionService = {
       if (user.completedMissions.includes(mission._id)) {
         return formatMissionWithoutKeyLatLngUsers(mission);
       }
-      if (mission.user.length === 0) {
+      if (mission.users.length === 0) {
         mission.lastJoinAt = Date.now();
         mission.users.push(user);
         const missionCloseAt = new Date(mission.lastJoinAt);
