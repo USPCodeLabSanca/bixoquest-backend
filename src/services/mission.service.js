@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
 const MissionModel = require('../models/mission');
+const UserModel = require('../models/user');
 const {formatMission} = require('../lib/format-mission');
 
 const MINUTES_TO_CLOSE_GROUP_MISSION = 1;
@@ -106,13 +107,14 @@ const missionService = {
         if (mission.users.length >= mission.minimumOfUsersToComplete) {
           for await (const missionUser of mission.users) {
             if (!missionUser.completedMissions.includes(mission._id)) {
-              missionUser.completedMissions.push(mission._id);
+              const userToUpdate = await UserModel.findById(missionUser._id);
+              userToUpdate.completedMissions.push(mission._id);
               if (mission.isSpecial) {
-                missionUser.availableSpecialPacks += mission.numberOfPacks;
+                userToUpdate.availableSpecialPacks += mission.numberOfPacks;
               } else {
-                missionUser.availablePacks += mission.numberOfPacks;
+                userToUpdate.availablePacks += mission.numberOfPacks;
               }
-              missionUser.save();
+              await userToUpdate.save();
             }
           }
 
