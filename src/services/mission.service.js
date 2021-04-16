@@ -217,6 +217,10 @@ const missionService = {
       newMissionObj.lat = lat;
       newMissionObj.lng = lng;
       newMissionObj.key = key;
+    } else if (type === 'group') {
+      newMissionObj.lat = lat;
+      newMissionObj.lng = lng;
+      newMissionObj.minimumOfUsersToComplete = minimumOfUsersToComplete;
     } else {
       throw new createError.BadRequest('Erro no tipo da missão.');
     }
