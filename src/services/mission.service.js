@@ -98,22 +98,11 @@ const missionService = {
 
         return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
       } else {
-        console.log('mission.users.find((missionUser) => missionUser._id === user._id)');
-        console.log(mission.users.find((missionUser) => missionUser._id === user._id));
-        console.log('mission.users');
-        console.log(mission.users);
-        console.log('user._id');
-        console.log(user._id);
         if (!mission.users.some((missionUser) => {
-          console.log(missionUser._id);
           return missionUser._id.toString() === user._id.toString();
         })) {
-          console.log('entrou');
           mission.users.push(user);
         }
-        console.log(mission.users);
-        console.log(mission.users.length);
-        console.log(mission.minimumOfUsersToComplete);
         if (mission.users.length >= mission.minimumOfUsersToComplete) {
           for await (const missionUser of mission.users) {
             if (!missionUser.completedMissions.includes(mission._id)) {
