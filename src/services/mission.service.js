@@ -89,27 +89,19 @@ const missionService = {
       if (user.completedMissions.includes(mission._id)) {
         return formatMissionWithoutKeyLatLngUsers(mission);
       }
-      if (mission.users.length === 0) {
+      if (!mission.lastJoinAt || Date.now() > (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))) {
         mission.lastJoinAt = Date.now();
-        mission.users.push(user);
-        const missionCloseAt = new Date(mission.lastJoinAt);
-        missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
-
-        await mission.save();
-
-        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
-      }
-      const missionCloseAt = new Date(mission.lastJoinAt);
-      missionCloseAt.setMinutes(missionCloseAt.getMinutes() + MINUTES_TO_CLOSE_GROUP_MISSION);
-      if (Date.now() > missionCloseAt.getTime()) {
         mission.users = [];
-        mission.lastJoinAt = Date.now();
         mission.users.push(user);
 
         await mission.save();
 
-        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
+        return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
       } else {
+        console.log('mission.users.find((missionUser) => missionUser._id === user._id)');
+        console.log(mission.users.find((missionUser) => missionUser._id === user._id));
+        console.log('mission.users');
+        console.log(mission.users);
         if (!mission.users.find((missionUser) => missionUser._id === user._id)) {
           mission.users.push(user);
         }
@@ -128,7 +120,7 @@ const missionService = {
           }
           return formatMissionWithoutKeyLatLngUsers(mission);
         } else {
-          return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: missionCloseAt.getTime()};
+          return {...formatMissionWithoutKeyLatLngUsers(mission), closeAt: (mission.lastJoinAt + (MINUTES_TO_CLOSE_GROUP_MISSION * 60 * 1000))};
         }
       }
     } else {
