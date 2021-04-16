@@ -20,7 +20,7 @@ const missionSchema = Mongoose.Schema(
       },
       minimumOfUsersToComplete: Number,
       users: {
-        type: [{type: Schema.Types.ObjectId, ref: 'user'}],
+        type: [{type: Mongoose.Schema.Types.ObjectId, ref: 'user'}],
         default: [],
       },
       lastJoinAt: Number,
