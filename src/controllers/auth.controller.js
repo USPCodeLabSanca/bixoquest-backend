@@ -315,6 +315,12 @@ async function authenticationSuccess(req, res, next) {
   try {
     console.log('req.cookies');
     console.log(req.cookies);
+    console.log('req.user');
+    console.log(req.user);
+    console.log('req.header(\'Authorization\')');
+    console.log(req.header('Authorization'));
+    console.log('req');
+    console.log(req);
     if (!req.cookies.session) {
       throw new createError.Forbidden('Cookie não pode ser vazio.');
     }
