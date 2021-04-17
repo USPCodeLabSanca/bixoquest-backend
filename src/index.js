@@ -69,7 +69,7 @@ passport.use('provider', new OAuth1Strategy({
           console.error(err);
         }
 
-        AuthController.authenticateUser(data, done);
+        await AuthController.authenticateUser(data, done);
       },
   );
 }));
