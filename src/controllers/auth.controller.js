@@ -313,6 +313,8 @@ async function authenticateUser(data, cb) {
  */
 async function authenticationSuccess(req, res, next) {
   try {
+    console.log('req.cookies');
+    console.log(req.cookies);
     if (!req.cookies.session) {
       throw new createError.Forbidden('Cookie não pode ser vazio.');
     }

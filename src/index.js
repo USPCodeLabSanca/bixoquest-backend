@@ -85,7 +85,7 @@ passport.deserializeUser((user, done) => {
 app.get('/api/auth/', passport.authenticate('provider'));
 
 app.get('/api/auth/redirect', passport.authenticate('provider', {
-  successRedirect: `${env.FRONTEND_URL}/auth-usp`,
+  successRedirect: `${env.FRONTEND_URL}/auth`,
   failureRedirect: '/api/auth/failure',
 }));
 
