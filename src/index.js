@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 app.use(cookieSession({
   name: 'session',
   keys: [env.SESSION_KEY],
-  maxAge: 24 * 60 * 60 * 1000, // One day in milliseconds
+  maxAge: 1 * 60 * 1000, // One minute in milliseconds
 }));
 
 app.use(cookieParser());
