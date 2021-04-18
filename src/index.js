@@ -1,6 +1,9 @@
+const path = require('path');
+
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
 const cors = require('cors');
 const passport = require('passport');
 const OAuth1Strategy = require('passport-oauth1');
@@ -19,6 +22,13 @@ const app = express();
 const port = env.PORT || 8080;
 
 const http = httpServer(app);
+
+// create a rotating write stream
+const accessLogStream = rfs.createStream('access.log', {
+  interval: '1d', // rotate daily
+  path: path.join(__dirname, '..', 'logs'),
+});
+app.use(morgan('combined', {stream: accessLogStream}));
 
 app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 
