@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const UserModel = require('../models/user');
 
+const logger = require('../lib/winston');
 const {sendEmail} = require('../lib/send-email');
 const {formatUser} = require('../lib/format-user');
 const {handleValidationResult} = require('../lib/handle-validation-result');
@@ -313,14 +314,11 @@ async function authenticateUser(data, cb) {
  */
 async function authenticationSuccess(req, res, next) {
   try {
-    console.log('req.cookies');
-    console.log(req.cookies);
-    console.log('req.user');
-    console.log(req.user);
-    console.log('req.header(\'Authorization\')');
-    console.log(req.header('Authorization'));
-    console.log('req');
-    console.log(req);
+    logger.info('req.cookies');
+    logger.info(req.cookies);
+    logger.info('req.user');
+    logger.info(req.user);
+
     if (!req.cookies.session) {
       throw new createError.Forbidden('Cookie não pode ser vazio.');
     }
