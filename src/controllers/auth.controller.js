@@ -314,8 +314,6 @@ async function authenticateUser(data, cb) {
  */
 async function authenticationSuccess(req, res, next) {
   try {
-    logger.info('req.cookies');
-    logger.info(req.cookies);
     logger.info('req.user');
     logger.info(req.user);
 
