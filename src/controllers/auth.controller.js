@@ -319,10 +319,6 @@ async function authenticationSuccess(req, res, next) {
     logger.info('req.user');
     logger.info(req.user);
 
-    if (!req.cookies.session) {
-      throw new createError.Forbidden('Cookie não pode ser vazio.');
-    }
-
     if (!req.user) {
       throw new createError.Forbidden('Usuário não encontrado.');
     }
