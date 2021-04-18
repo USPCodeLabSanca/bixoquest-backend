@@ -298,11 +298,11 @@ async function authenticateUser(data, cb) {
     await newUser.save();
 
     if (newUser) {
-      return cb(null, newUser);
+      return cb(null, formatUser(newUser, ['_id']));
     }
   }
 
-  return cb(null, currentUser);
+  return cb(null, formatUser(currentUser, ['_id']));
 }
 
 /**
@@ -314,11 +314,10 @@ async function authenticateUser(data, cb) {
  */
 async function authenticationSuccess(req, res, next) {
   try {
-    logger.info('req.cookies');
-    logger.info(req.cookies);
     logger.info('req.user');
     logger.info(req.user);
 
+    req.user = await UserModel.findById(req.user._id);
     if (!req.user) {
       throw new createError.Forbidden('Usuário não encontrado.');
     }
