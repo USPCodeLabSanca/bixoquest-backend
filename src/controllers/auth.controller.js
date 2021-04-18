@@ -290,7 +290,7 @@ async function authenticateUser(data, cb) {
   if (!currentUser) {
     const newUser = new UserModel({
       nusp: user.loginUsuario,
-      email: user.emailUspUsuario,
+      email: user.emailUspUsuario || 'None',
       name: user.nomeUsuario,
       course: null,
     });
