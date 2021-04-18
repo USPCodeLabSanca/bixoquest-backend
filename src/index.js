@@ -8,7 +8,7 @@ const cors = require('cors');
 const passport = require('passport');
 const OAuth1Strategy = require('passport-oauth1');
 const OAuth = require('oauth');
-const cookieSession = require('cookie-session');
+const session = require('express-session');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
@@ -23,6 +23,12 @@ const port = env.PORT || 8080;
 
 const http = httpServer(app);
 
+app.use(cors({
+  origin: [env.FRONTEND_URL, env.FRONTEND_LOCAL_URL, env.BACKOFFICE_URL, env.BACKOFFICE_LOCAL_URL],
+  exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
+  credentials: true,
+}));
+
 // create a rotating write stream
 const accessLogStream = rfs.createStream('access.log', {
   interval: '1d', // rotate daily
@@ -32,23 +38,16 @@ app.use(morgan('combined', {stream: accessLogStream}));
 
 app.use(express.static(path.join(__dirname, env.FRONTEND_PATH)));
 
-// cookieSession config
-app.use(cookieSession({
-  name: 'session',
-  keys: [env.SESSION_KEY],
-  maxAge: 1 * 60 * 1000, // One minute in milliseconds
-}));
-
 app.use(cookieParser());
+app.use(express.json());
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  secret: env.SESSION_KEY,
+  cookie: {maxAge: 1 * 60 * 1000}, // One minute in milliseconds
+}));
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(express.json());
-app.use(cors({
-  origin: [env.FRONTEND_URL, env.FRONTEND_LOCAL_URL, env.BACKOFFICE_URL, env.BACKOFFICE_LOCAL_URL],
-  exposedHeaders: ['authorization', 'X-Forwarded-For', 'Host', 'Upgrade', 'Connection'],
-  credentials: true,
-}));
 
 passport.use('provider', new OAuth1Strategy({
   requestTokenURL: env.OAUTH_REQUEST_TOKEN_URL,
