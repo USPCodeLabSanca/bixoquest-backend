@@ -18,4 +18,15 @@ router.post(
     StickersController.donate,
 );
 
+router.post(
+    '/special/donate',
+    [
+      body('specialStickers', 'Invalid field \'stickers\'').not().isEmpty(),
+      body('userId', 'Invalid field \'userId\'').not().isEmpty(),
+      AuthMiddleware.authenticate,
+      AuthMiddleware.isAuthenticated,
+    ],
+    StickersController.donateSpecial,
+);
+
 module.exports = router;
