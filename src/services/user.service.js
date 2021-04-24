@@ -20,6 +20,16 @@ const userService = {
 
     return friend;
   },
+  removeFriend: async (user, idFriend) => {
+    const friend = await UserModel.findById(idFriend);
+    
+    if (friend) {
+      user.friends.pull({_id:idFriend});
+      await user.save();
+    } else {
+      throw new createError.NotFound('Usuário não foi encontrado na lista de amigos');
+    }
+  },
   getUserFriends: async (id) => {
     const user = await UserModel.findById(id).populate('friends');
 

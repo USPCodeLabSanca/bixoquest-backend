@@ -28,6 +28,24 @@ const userController = {
       return next(error);
     }
   },
+  removeFriend: async (req, res, next) => {
+    try {
+      const user = req.user;
+      const {idFriend} = req.body;
+
+      const friend = await userService.removeFriend(user, idFriend);
+      return res.status(200).json();
+      
+    } catch (error) {
+      console.log(error);
+
+      if (!createError.isHttpError(error)) {
+        error = new createError.InternalServerError('Erro no servidor.');
+      }
+
+      return next(error);
+    }
+  },
   getFriends: async (req, res, next) => {
     try {
       const {id} = req.user;

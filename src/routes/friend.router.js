@@ -14,6 +14,15 @@ router.post(
     FriendController.addFriend,
 );
 
+router.delete(
+  '/',
+  [
+    AuthMiddleware.authenticate,
+    AuthMiddleware.isAuthenticated,
+  ],
+  FriendController.removeFriend,
+);
+
 router.get(
     '/',
     [
