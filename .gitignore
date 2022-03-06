@@ -2,7 +2,7 @@ node_modules/
 .vscode
 src/client/
 logs/
-
+build/
 
 .env
 Insomnia*
