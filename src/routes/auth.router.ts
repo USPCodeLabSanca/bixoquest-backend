@@ -6,6 +6,8 @@ import AuthController from '../controllers/auth.controller';
 
 const router = Router();
 
+const authController = new AuthController();
+
 router.post(
     '/signup',
     [
@@ -23,7 +25,7 @@ router.post(
       body('character.hair', 'Invalid field \'character.hair\'').notEmpty().isInt({min: 0, max: 36}),
       body('character.mouth', 'Invalid field \'character.mouth\'').notEmpty().isInt({min: 0, max: 5}),
     ],
-    AuthController.signup,
+    (req: any, res: any, next: any) => authController.signup(req, res, next),
 );
 
 router.post(
@@ -42,7 +44,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    AuthController.signupUspSecondStep,
+    (req: any, res: any, next: any) => authController.signupUspSecondStep(req, res, next),
 );
 
 router.post(
@@ -51,7 +53,7 @@ router.post(
       body('email', 'Invalid field \'email\'').isEmail(),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
     ],
-    AuthController.login,
+    (req: any, res: any, next: any) => authController.login(req, res, next),
 );
 
 router.post(
@@ -59,7 +61,7 @@ router.post(
     [
       body('email', 'Invalid field \'email\'').isEmail(),
     ],
-    AuthController.forgotPassword,
+    (req: any, res: any, next: any) => authController.forgotPassword(req, res, next),
 );
 
 router.post(
@@ -69,13 +71,22 @@ router.post(
       body('code', 'Invalid field \'code\'').isLength({min: 12, max: 12}),
       body('password', 'Invalid field \'password\'').isLength({min: 6}),
     ],
-    AuthController.resetPassword,
+    (req: any, res: any, next: any) => authController.resetPassword(req, res, next),
 );
 
-router.get('/success', AuthController.authenticationSuccess);
+router.get(
+  '/success',
+  (req: any, res: any, next: any) => authController.authenticationSuccess(req, res, next),
+);
 
-router.get('/failure', AuthController.authenticationFailure);
+router.get(
+  '/failure',
+  (req: any, res: any, next: any) => authController.authenticationFailure(req, res, next),
+);
 
-router.get('/logout', AuthController.logout);
+router.get(
+  '/logout',
+  (req: any, res: any) => authController.logout(req, res),
+);
 
 export default router;

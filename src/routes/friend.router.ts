@@ -5,13 +5,15 @@ import FriendController from '../controllers/friend.controller';
 
 const router = Router();
 
+const friendController = new FriendController();
+
 router.post(
     '/',
     [
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    FriendController.addFriend,
+    (req: any, res: any, next: any) => friendController.addFriend(req, res, next),
 );
 
 router.get(
@@ -20,7 +22,7 @@ router.get(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    FriendController.getFriends,
+    (req: any, res: any, next: any) => friendController.getFriends(req, res, next),
 );
 
 export default router;

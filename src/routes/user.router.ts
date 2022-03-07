@@ -6,13 +6,15 @@ import UserController from '../controllers/user.controller';
 
 const router = Router();
 
+const userController = new UserController();
+
 router.get(
     '/',
     [
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    UserController.getLoggedUser,
+    (req: any, res: any, next: any) => userController.getLoggedUser(req, res, next),
 );
 
 router.put(
@@ -30,7 +32,7 @@ router.put(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    UserController.updateUserProfile,
+    (req: any, res: any, next: any) => userController.updateUserProfile(req, res, next),
 );
 
 router.get(
@@ -39,7 +41,7 @@ router.get(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    UserController.getUserProfile,
+    (req: any, res: any, next: any) => userController.getUserProfile(req, res, next),
 );
 
 export default router;

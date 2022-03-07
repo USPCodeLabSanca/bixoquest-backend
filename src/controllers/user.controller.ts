@@ -3,8 +3,8 @@ import createError from 'http-errors';
 import userService from '../services/user.service';
 import handleValidationResult from '../lib/handle-validation-result';
 
-export default {
-  getLoggedUser: async (req: any, res: any, next: any) => {
+export default class UserController {
+  public async getLoggedUser(req: any, res: any, next: any) {
     try {
       return res.status(200).json(req.user);
     } catch (error) {
@@ -16,8 +16,9 @@ export default {
 
       return next(error);
     }
-  },
-  getUserProfile: async (req: any, res: any, next: any) => {
+  }
+
+  public async getUserProfile(req: any, res: any, next: any) {
     try {
       handleValidationResult(req);
 
@@ -35,8 +36,9 @@ export default {
 
       return next(error);
     }
-  },
-  getUsers: async (req: any, res: any, next: any) => {
+  }
+
+  public async getUsers(req: any, res: any, next: any) {
     try {
       const users = await userService.getUsers();
 
@@ -50,8 +52,9 @@ export default {
 
       return next(error);
     }
-  },
-  getUser: async (req: any, res: any, next: any) => {
+  }
+
+  public async getUser(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
 
@@ -67,8 +70,9 @@ export default {
 
       return next(error);
     }
-  },
-  createUser: async (req: any, res: any, next: any) => {
+  }
+
+  public async createUser(req: any, res: any, next: any) {
     try {
       const {
         nusp,
@@ -90,8 +94,9 @@ export default {
 
       return next(error);
     }
-  },
-  editUser: async (req: any, res: any, next: any) => {
+  }
+
+  public async editUser(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
       const {
@@ -114,8 +119,9 @@ export default {
 
       return next(error);
     }
-  },
-  updateUserProfile: async (req: any, res: any, next: any) => {
+  }
+
+  public async updateUserProfile(req: any, res: any, next: any) {
     try {
       const {_id, nusp, name, course} = req.user;
       const {
@@ -135,8 +141,9 @@ export default {
 
       return next(error);
     }
-  },
-  deleteUser: async (req: any, res: any, next: any) => {
+  }
+
+  public async deleteUser(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
 
@@ -152,5 +159,5 @@ export default {
 
       return next(error);
     }
-  },
+  }
 };

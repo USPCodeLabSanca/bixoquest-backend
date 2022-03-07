@@ -2,8 +2,8 @@ import createError from 'http-errors';
 
 import packService from '../services/pack.service';
 
-export default {
-  openPack: async (req: any, res: any, next: any) => {
+export default class PackController {
+  public async openPack(req: any, res: any, next: any) {
     try {
       const user = req.user;
 
@@ -19,8 +19,9 @@ export default {
 
       return next(error);
     }
-  },
-  openSpecialPack: async (req: any, res: any, next: any) => {
+  }
+
+  public async openSpecialPack(req: any, res: any, next: any) {
     try {
       const user = req.user;
 
@@ -36,5 +37,5 @@ export default {
 
       return next(error);
     }
-  },
+  }
 };

@@ -1,9 +1,11 @@
 import {Router} from 'express';
 
 import AdminAuthMiddleware from '../../middlewares/admin-auth.middleware';
-import UsersController from '../../controllers/user.controller';
+import UserController from '../../controllers/user.controller';
 
 const router = Router();
+
+const userController = new UserController();
 
 router.get(
     '/',
@@ -11,7 +13,7 @@ router.get(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    UsersController.getUsers,
+    (req: any, res: any, next: any) => userController.getUsers(req, res, next),
 );
 
 router.get(
@@ -20,7 +22,7 @@ router.get(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    UsersController.getUser,
+    (req: any, res: any, next: any) => userController.getUser(req, res, next),
 );
 
 router.post(
@@ -29,7 +31,7 @@ router.post(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    UsersController.createUser,
+    (req: any, res: any, next: any) => userController.createUser(req, res, next),
 );
 
 router.put(
@@ -38,7 +40,7 @@ router.put(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    UsersController.editUser,
+    (req: any, res: any, next: any) => userController.editUser(req, res, next),
 );
 
 router.delete(
@@ -47,7 +49,7 @@ router.delete(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    UsersController.deleteUser,
+    (req: any, res: any, next: any) => userController.deleteUser(req, res, next),
 );
 
 export default router;

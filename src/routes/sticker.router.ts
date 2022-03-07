@@ -3,9 +3,11 @@ import {Router} from 'express';
 import {body} from 'express-validator';
 
 import AuthMiddleware from '../middlewares/auth.middleware';
-import StickersController from '../controllers/sticker.controller';
+import StickerController from '../controllers/sticker.controller';
 
 const router = Router();
+
+const stickerController = new StickerController();
 
 router.post(
     '/donate',
@@ -15,7 +17,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    StickersController.donate,
+    (req: any, res: any, next: any) => stickerController.donate(req, res, next),
 );
 
 router.post(
@@ -26,7 +28,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    StickersController.donateSpecial,
+    (req: any, res: any, next: any) => stickerController.donateSpecial(req, res, next),
 );
 
 export default router;

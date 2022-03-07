@@ -2,8 +2,8 @@ import createError from 'http-errors';
 
 import stickerService from '../services/sticker.service';
 
-export default {
-  donate: async (req: any, res: any, next: any) => {
+export default class StickerController {
+  public async donate(req: any, res: any, next: any) {
     try {
       const user = req.user;
       const {stickers, userId: receiverId} = req.body;
@@ -20,8 +20,9 @@ export default {
 
       return next(error);
     }
-  },
-  donateSpecial: async (req: any, res: any, next: any) => {
+  }
+
+  public async donateSpecial(req: any, res: any, next: any) {
     try {
       const user = req.user;
       const {specialStickers, userId: receiverId} = req.body;
@@ -38,5 +39,5 @@ export default {
 
       return next(error);
     }
-  },
+  }
 };

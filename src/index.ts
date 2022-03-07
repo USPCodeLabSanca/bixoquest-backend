@@ -12,7 +12,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 require('dotenv').config();
 
-import httpServer from './controllers/game.controller';
+import HttpServer from './controllers/game.controller';
 import AuthController from './controllers/auth.controller';
 import Routes from './routes';
 
@@ -21,7 +21,8 @@ const {env} = process;
 const app = express();
 const port = env.PORT || 8080;
 
-const http = httpServer(app);
+const http = new HttpServer(app);
+const authController = new AuthController();
 
 app.use(cors({
   origin: [
@@ -83,7 +84,7 @@ passport.use('provider', new OAuth1Strategy({
           console.error(err);
         }
 
-        await AuthController.authenticateUser(data, done);
+        await authController.authenticateUser(data, done);
       },
   );
 }));
@@ -122,7 +123,7 @@ mongoose.connection.on('error', (e) => {
 
 mongoose.connection.on('open', () => {
   console.log('Connected successfuly to MongoDB!');
-  http.listen(port, () => {
+  http.getServer().listen(port, () => {
     console.log(`Now listening at port ${port} for requests!`);
   });
 });

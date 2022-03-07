@@ -2,9 +2,9 @@ import createError from 'http-errors';
 
 import missionService from '../services/mission.service';
 
-export default {
+export default class MissionController {
   // App
-  getAllMissions: async (req: any, res: any, next: any) => {
+  public async getAllMissions(req: any, res: any, next: any) {
     try {
       const missionsWithoutLatLngKey = await missionService.getAllMissions();
 
@@ -18,8 +18,9 @@ export default {
 
       return next(error);
     }
-  },
-  getNearMissions: async (req: any, res: any, next: any) => {
+  }
+
+  public async getNearMissions(req: any, res: any, next: any) {
     try {
       const {lat, lng} = req.query;
 
@@ -35,8 +36,9 @@ export default {
 
       return next(error);
     }
-  },
-  completeMission: async (req: any, res: any, next: any) => {
+  }
+
+  public async completeMission(req: any, res: any, next: any) {
     try {
       const {lat, lng, key} = req.body;
       const {id} = req.params;
@@ -54,9 +56,10 @@ export default {
 
       return next(error);
     }
-  },
+  }
+
   // Backoffice
-  getMissions: async (req: any, res: any, next: any) => {
+  public async getMissions(req: any, res: any, next: any) {
     try {
       const missions = await missionService.getMissions();
 
@@ -70,8 +73,9 @@ export default {
 
       return next(error);
     }
-  },
-  getMission: async (req: any, res: any, next: any) => {
+  }
+
+  public async getMission(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
 
@@ -87,8 +91,9 @@ export default {
 
       return next(error);
     }
-  },
-  createMission: async (req: any, res: any, next: any) => {
+  }
+
+  public async createMission(req: any, res: any, next: any) {
     try {
       const {
         title,
@@ -130,8 +135,9 @@ export default {
 
       return next(error);
     }
-  },
-  editMission: async (req: any, res: any, next: any) => {
+  }
+
+  public async editMission(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
       const {
@@ -175,8 +181,9 @@ export default {
 
       return next(error);
     }
-  },
-  deleteMission: async (req: any, res: any, next: any) => {
+  }
+
+  public async deleteMission(req: any, res: any, next: any) {
     try {
       const {id} = req.params;
 
@@ -192,5 +199,5 @@ export default {
 
       return next(error);
     }
-  },
+  }
 };

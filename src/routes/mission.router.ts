@@ -1,9 +1,11 @@
 import {Router} from 'express';
 
 import AuthMiddleware from '../middlewares/auth.middleware';
-import MissionsController from '../controllers/mission.controller';
+import MissionController from '../controllers/mission.controller';
 
 const router = Router();
+
+const missionController = new MissionController();
 
 router.get(
     '/all',
@@ -11,7 +13,7 @@ router.get(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    MissionsController.getAllMissions,
+    (req: any, res: any, next: any) => missionController.getAllMissions(req, res, next),
 );
 
 router.get(
@@ -20,7 +22,7 @@ router.get(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    MissionsController.getNearMissions,
+    (req: any, res: any, next: any) => missionController.getNearMissions(req, res, next),
 );
 
 router.post(
@@ -29,7 +31,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    MissionsController.completeMission,
+    (req: any, res: any, next: any) => missionController.completeMission(req, res, next),
 );
 
 export default router;
