@@ -3,8 +3,8 @@ import createError from 'http-errors';
 import userService from '../services/user.service';
 import formatUser from '../lib/format-user';
 
-export default {
-  addFriend: async (req: any, res: any, next: any) => {
+export default class FriendController {
+  public async addFriend(req: any, res: any, next: any) {
     try {
       const user = req.user;
       const {idFriend} = req.body;
@@ -27,8 +27,9 @@ export default {
 
       return next(error);
     }
-  },
-  getFriends: async (req: any, res: any, next: any) => {
+  }
+
+  public async getFriends(req: any, res: any, next: any) {
     try {
       const {id} = req.user;
 
@@ -55,5 +56,5 @@ export default {
 
       return next(error);
     }
-  },
+  }
 };

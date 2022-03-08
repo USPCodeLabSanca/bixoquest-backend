@@ -1,9 +1,11 @@
 import {Router} from 'express';
 
 import AdminAuthMiddleware from '../../middlewares/admin-auth.middleware';
-import MissionsController from '../../controllers/mission.controller';
+import MissionController from '../../controllers/mission.controller';
 
 const router = Router();
+
+const missionController = new MissionController();
 
 router.get(
     '/',
@@ -11,7 +13,7 @@ router.get(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    MissionsController.getMissions,
+    (req: any, res: any, next: any) => missionController.getMissions(req, res, next),
 );
 
 router.get(
@@ -20,7 +22,7 @@ router.get(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    MissionsController.getMission,
+    (req: any, res: any, next: any) => missionController.getMission(req, res, next),
 );
 
 router.post(
@@ -29,7 +31,7 @@ router.post(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    MissionsController.createMission,
+    (req: any, res: any, next: any) => missionController.createMission(req, res, next),
 );
 
 router.put(
@@ -38,7 +40,7 @@ router.put(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    MissionsController.editMission,
+    (req: any, res: any, next: any) => missionController.editMission(req, res, next),
 );
 
 router.delete(
@@ -47,7 +49,7 @@ router.delete(
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    MissionsController.deleteMission,
+    (req: any, res: any, next: any) => missionController.deleteMission(req, res, next),
 );
 
 export default router;

@@ -5,13 +5,15 @@ import StatsController from '../../controllers/stats.controller';
 
 const router = Router();
 
+const statsController = new StatsController();
+
 router.get(
     '/',
     [
       AdminAuthMiddleware.authenticate,
       AdminAuthMiddleware.isAuthenticated,
     ],
-    StatsController.getStats,
+    (req: any, res: any, next: any) => statsController.getStats(req, res, next),
 );
 
 export default router;

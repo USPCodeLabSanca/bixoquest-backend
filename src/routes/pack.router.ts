@@ -1,9 +1,11 @@
 import {Router} from 'express';
 
 import AuthMiddleware from '../middlewares/auth.middleware';
-import PacksController from '../controllers/pack.controller';
+import PackController from '../controllers/pack.controller';
 
 const router = Router();
+
+const packController = new PackController();
 
 router.post(
     '/open',
@@ -11,7 +13,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    PacksController.openPack,
+    (req: any, res: any, next: any) => packController.openPack(req, res, next),
 );
 
 router.post(
@@ -20,7 +22,7 @@ router.post(
       AuthMiddleware.authenticate,
       AuthMiddleware.isAuthenticated,
     ],
-    PacksController.openSpecialPack,
+    (req: any, res: any, next: any) => packController.openSpecialPack(req, res, next),
 );
 
 export default router;

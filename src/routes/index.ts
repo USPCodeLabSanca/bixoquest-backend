@@ -10,9 +10,11 @@ import packsRouter from './pack.router';
 import missionsRouter from './mission.router';
 import stickersRouter from './sticker.router';
 import AuthMiddleware from '../middlewares/auth.middleware';
-import MissionsController from '../controllers/mission.controller';
+import MissionController from '../controllers/mission.controller';
 
 const router = Router();
+
+const missionController = new MissionController()
 
 router.use('/backoffice', backofficeRouter);
 router.use('/auth', authRouter);
@@ -39,7 +41,7 @@ router.post(
 
       if (decodedToken.isMission) {
         req.params.id = decodedToken.missionId;
-        MissionsController.completeMission(req, res, next);
+        missionController.completeMission(req, res, next);
       }
     },
 );
