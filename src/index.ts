@@ -112,18 +112,19 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, env.FRONTEND_PATH as string, 'index.html')));
 
-const backendUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
+const databaseUrl = `mongodb+srv://${env.MONGO_ATLAS_USER}:${env.MONGO_ATLAS_PASSWORD}@${env.MONGO_ATLAS_URL}/${env.MONGO_ATLAS_DB}?retryWrites=true&w=majority`;
 
-mongoose.connect(backendUrl);
+async function startApp() {
+  try {
+    await mongoose.connect(databaseUrl);
+    console.log('Connected successfuly to MongoDB!');
+    http.getServer().listen(port, () => {
+      console.log(`Now listening at port ${port} for requests!`);
+    });
+  } catch (error) {
+    console.error('Error connecting to MongoDB!');
+    console.error(error);
+  }
+}
 
-mongoose.connection.on('error', (e) => {
-  console.error('Error connecting to MongoDB!');
-  console.error(e);
-});
-
-mongoose.connection.on('open', () => {
-  console.log('Connected successfuly to MongoDB!');
-  http.getServer().listen(port, () => {
-    console.log(`Now listening at port ${port} for requests!`);
-  });
-});
+startApp();
